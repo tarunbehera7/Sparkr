@@ -30,10 +30,6 @@ function Navbar() {
           <Link to="/content" className="nav-link">Content Library</Link>
           <Link to="/map" className="nav-link">Connect</Link>
           <Link to="/community" className="nav-link">Community</Link>
-          <Link to="/chat" className="nav-link">
-            <FaComments /> Chat
-          </Link>
-          <Link to="/about" className="nav-link">About</Link>
           {user ? (
             <div className="user-menu">
               <button className="user-menu-button" onClick={toggleUserMenu}>

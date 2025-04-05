@@ -3,16 +3,9 @@ import { useAuth } from '../context/AuthContext';
 import io from 'socket.io-client';
 import '../styles/Discussion.css';
 
-const Discussion = ({ onClose }) => {
+const Discussion = ({ onClose, initialRoom }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-  const [rooms] = useState([
-    { id: 'general', name: 'General' },
-    { id: 'environment', name: 'Environment' },
-    { id: 'education', name: 'Education' },
-    { id: 'healthcare', name: 'Healthcare' }
-  ]);
-  const [currentRoom, setCurrentRoom] = useState('general');
   const { user } = useAuth();
   const socketRef = useRef();
   const messagesEndRef = useRef(null);
@@ -20,7 +13,7 @@ const Discussion = ({ onClose }) => {
   useEffect(() => {
     // Connect to Socket.io server
     socketRef.current = io('http://localhost:3001', {
-      query: { roomId: currentRoom }
+      query: { room: initialRoom }
     });
 
     // Listen for incoming messages
@@ -28,13 +21,10 @@ const Discussion = ({ onClose }) => {
       setMessages((prevMessages) => [...prevMessages, message]);
     });
 
-    // Join room
-    socketRef.current.emit('joinRoom', currentRoom);
-
     return () => {
       socketRef.current.disconnect();
     };
-  }, [currentRoom]);
+  }, [initialRoom]);
 
   useEffect(() => {
     scrollToBottom();
@@ -48,88 +38,59 @@ const Discussion = ({ onClose }) => {
     e.preventDefault();
     if (newMessage.trim() && user) {
       const messageData = {
+        id: Date.now(),
         content: newMessage,
-        sender: user.name,
-        avatar: user.avatar,
-        room: currentRoom,
-        timestamp: new Date().toISOString()
+        sender: user.name || 'Anonymous',
+        avatar: user.name ? user.name.split(' ').map(n => n[0]).join('') : 'A',
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        room: initialRoom
       };
 
       socketRef.current.emit('message', messageData);
+      setMessages(prevMessages => [...prevMessages, messageData]);
       setNewMessage('');
     }
   };
 
-  const handleRoomChange = (roomId) => {
-    socketRef.current.emit('leaveRoom', currentRoom);
-    setCurrentRoom(roomId);
-    setMessages([]); // Clear messages when changing rooms
-  };
-
   return (
-    <div className="discussion-modal">
-      <div className="discussion-content">
+    <div className="discussion-overlay">
+      <div className="discussion-container">
         <div className="discussion-header">
-          <h2>Community Discussion</h2>
-          <button className="close-button" onClick={onClose}>&times;</button>
+          <h2>{initialRoom} Discussion</h2>
+          <button className="btn-close" onClick={onClose}>&times;</button>
         </div>
         
-        <div className="discussion-body">
-          <div className="rooms-sidebar">
-            <h3>Discussion Rooms</h3>
-            <ul className="room-list">
-              {rooms.map((room) => (
-                <li
-                  key={room.id}
-                  className={`room-item ${currentRoom === room.id ? 'active' : ''}`}
-                  onClick={() => handleRoomChange(room.id)}
-                >
-                  {room.name}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="chat-section">
-            <div className="chat-header">
-              <h3>{rooms.find(room => room.id === currentRoom)?.name} Discussion</h3>
-            </div>
-
-            <div className="messages-container">
-              {messages.map((message, index) => (
-                <div
-                  key={index}
-                  className={`message ${message.sender === user?.name ? 'own-message' : ''}`}
-                >
-                  <img src={message.avatar} alt={message.sender} className="message-avatar" />
-                  <div className="message-content">
-                    <div className="message-header">
-                      <span className="sender-name">{message.sender}</span>
-                      <span className="timestamp">
-                        {new Date(message.timestamp).toLocaleTimeString()}
-                      </span>
-                    </div>
-                    <p>{message.content}</p>
-                  </div>
+        <div className="messages-container">
+          {messages.map((message) => (
+            <div
+              key={message.id}
+              className={`message ${message.sender === user?.name ? 'message-sent' : ''}`}
+            >
+              <div className="message-avatar">{message.avatar}</div>
+              <div className="message-content">
+                <div className="message-info">
+                  <span className="message-sender">{message.sender}</span>
+                  <span className="message-time">{message.timestamp}</span>
                 </div>
-              ))}
-              <div ref={messagesEndRef} />
+                <p className="message-text">{message.content}</p>
+              </div>
             </div>
-
-            <form className="message-form" onSubmit={handleSendMessage}>
-              <input
-                type="text"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Type your message..."
-                className="message-input"
-              />
-              <button type="submit" className="send-button">
-                Send
-              </button>
-            </form>
-          </div>
+          ))}
+          <div ref={messagesEndRef} />
         </div>
+
+        <form className="message-form" onSubmit={handleSendMessage}>
+          <input
+            type="text"
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            placeholder="Type your message..."
+            className="message-input"
+          />
+          <button type="submit" className="send-button">
+            Send
+          </button>
+        </form>
       </div>
     </div>
   );

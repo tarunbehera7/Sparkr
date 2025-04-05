@@ -5,6 +5,7 @@ import Discussion from '../components/Discussion';
 const Community = () => {
   const [activeSection, setActiveSection] = useState('discussions');
   const [showDiscussion, setShowDiscussion] = useState(false);
+  const [selectedDiscussion, setSelectedDiscussion] = useState(null);
   const [members, setMembers] = useState([
     {
       id: 1,
@@ -27,7 +28,7 @@ const Community = () => {
     {
       id: 1,
       title: "Climate Action Initiatives",
-      category: "Environment",
+      category: "environment",
       author: "John Doe",
       participants: 5,
       lastActive: "2h ago"
@@ -35,7 +36,7 @@ const Community = () => {
     {
       id: 2,
       title: "Education for All Campaign",
-      category: "Education",
+      category: "education",
       author: "Jane Smith",
       participants: 8,
       lastActive: "1h ago"
@@ -61,6 +62,12 @@ const Community = () => {
   }, [members, discussions]);
 
   const handleStartDiscussion = () => {
+    setSelectedDiscussion(null);
+    setShowDiscussion(true);
+  };
+
+  const handleDiscussionClick = (discussion) => {
+    setSelectedDiscussion(discussion);
     setShowDiscussion(true);
   };
 
@@ -85,7 +92,7 @@ const Community = () => {
     const newDiscussion = {
       id: Date.now() + 1,
       title: `${mainInterest} Discussion Group`,
-      category: mainInterest,
+      category: mainInterest.toLowerCase(),
       author: name,
       participants: 1,
       lastActive: new Date().toLocaleString()
@@ -153,17 +160,23 @@ const Community = () => {
       {activeSection === 'discussions' && (
         <div className="discussions-list">
           {discussions.map(discussion => (
-            <div key={discussion.id} className="discussion-card" onClick={handleStartDiscussion}>
+            <div 
+              key={discussion.id} 
+              className="discussion-card" 
+              onClick={() => handleDiscussionClick(discussion)}
+            >
               <div className="discussion-main">
-                <h3>{discussion.title}</h3>
+                <div className="discussion-info">
+                  <h3>{discussion.title}</h3>
+                  <div className="discussion-meta">
+                    <span>Started by {discussion.author}</span>
+                    <span>•</span>
+                    <span>{discussion.participants} participants</span>
+                    <span>•</span>
+                    <span>Last active {discussion.lastActive}</span>
+                  </div>
+                </div>
                 <span className="category">{discussion.category}</span>
-              </div>
-              <div className="discussion-meta">
-                <span>Started by {discussion.author}</span>
-                <span>•</span>
-                <span>{discussion.participants} participants</span>
-                <span>•</span>
-                <span>Last active {discussion.lastActive}</span>
               </div>
             </div>
           ))}
@@ -219,7 +232,10 @@ const Community = () => {
       )}
 
       {showDiscussion && (
-        <Discussion onClose={() => setShowDiscussion(false)} />
+        <Discussion 
+          onClose={() => setShowDiscussion(false)} 
+          initialRoom={selectedDiscussion?.category || 'general'}
+        />
       )}
     </div>
   );

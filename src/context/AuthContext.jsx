@@ -1,6 +1,44 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext(null);
+
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Check if user is logged in from localStorage
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+    setLoading(false);
+  }, []);
+
+  const login = (userData) => {
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
+  };
+
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem('user');
+  };
+
+  const value = {
+    user,
+    loading,
+    login,
+    logout,
+    isAuthenticated: !!user
+  };
+
+  return (
+    <AuthContext.Provider value={value}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
+};
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -10,66 +48,4 @@ export const useAuth = () => {
   return context;
 };
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const login = async (email, password) => {
-    try {
-      setLoading(true);
-      setError(null);
-      // TODO: Implement actual authentication logic here
-      // For now, we'll simulate a successful login
-      setUser({
-        id: '1',
-        name: 'Demo User',
-        email: email,
-        avatar: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg'
-      });
-    } catch (err) {
-      setError(err.message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loginWithGoogle = async (googleData) => {
-    try {
-      setLoading(true);
-      setError(null);
-      // Set user data from Google response
-      setUser({
-        id: googleData.sub,
-        name: googleData.name,
-        email: googleData.email,
-        avatar: googleData.picture || 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg'
-      });
-    } catch (err) {
-      setError(err.message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const logout = () => {
-    setUser(null);
-  };
-
-  const value = {
-    user,
-    loading,
-    error,
-    login,
-    loginWithGoogle,
-    logout
-  };
-
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
-}; 
+export default AuthContext; 
