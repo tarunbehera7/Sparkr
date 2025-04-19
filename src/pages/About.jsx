@@ -53,7 +53,7 @@ function About() {
     <div className="about-page">
       <section className="about-hero">
         <div className="about-hero-content">
-          <h1>About StorySpark</h1>
+          <h1>About Drivn</h1>
           <p>Empowering communities through storytelling and collective action</p>
         </div>
       </section>

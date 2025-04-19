@@ -19,7 +19,13 @@ function LoginPage() {
     setIsLoading(true);
 
     try {
-      await login(email, password);
+      // Create a user object with avatar and name
+      const userData = {
+        email,
+        name: email.split('@')[0], // Using email username as display name
+        avatar: `https://ui-avatars.com/api/?name=${email.split('@')[0]}&background=random`, // Generate avatar from name
+      };
+      await login(userData);
       navigate('/');
     } catch (err) {
       setError('Failed to sign in. Please check your credentials.');
@@ -31,7 +37,12 @@ function LoginPage() {
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
       const decoded = jwtDecode(credentialResponse.credential);
-      await loginWithGoogle(decoded);
+      const userData = {
+        email: decoded.email,
+        name: decoded.name,
+        avatar: decoded.picture || `https://ui-avatars.com/api/?name=${decoded.name}&background=random`,
+      };
+      await loginWithGoogle(userData);
       navigate('/');
     } catch (error) {
       setError('Failed to sign in with Google');
@@ -108,7 +119,7 @@ function LoginPage() {
         
         <div className="auth-footer">
           <p>Don't have an account?</p>
-          <a href="/register">Create an account</a>
+          <a href="/login">Create an account</a>
         </div>
       </div>
     </div>

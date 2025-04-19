@@ -1,0 +1,2354 @@
+----------------
+About.jsx  -
+----------------
+import React from 'react';
+import { FaUsers, FaLightbulb, FaHandshake, FaGlobe } from 'react-icons/fa';
+
+function About() {
+  const teamMembers = [
+    {
+      id: 1,
+      name: "Sarah Johnson",
+      role: "Founder & CEO",
+      bio: "Passionate about social impact and community building",
+      image: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg"
+    },
+    {
+      id: 2,
+      name: "Michael Chen",
+      role: "Head of Community",
+      bio: "Experienced in community engagement and social initiatives",
+      image: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg"
+    },
+    {
+      id: 3,
+      name: "Emma Wilson",
+      role: "Content Director",
+      bio: "Storyteller and content strategist focused on social causes",
+      image: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg"
+    }
+  ];
+
+  const values = [
+    {
+      icon: <FaUsers />,
+      title: "Community First",
+      description: "We believe in the power of community to drive change"
+    },
+    {
+      icon: <FaLightbulb />,
+      title: "Innovation",
+      description: "Constantly evolving to better serve our community"
+    },
+    {
+      icon: <FaHandshake />,
+      title: "Collaboration",
+      description: "Working together to create lasting impact"
+    },
+    {
+      icon: <FaGlobe />,
+      title: "Global Impact",
+      description: "Connecting changemakers across the world"
+    }
+  ];
+
+  return (
+    <div className="about-page">
+      <section className="about-hero">
+        <div className="about-hero-content">
+          <h1>About StorySpark</h1>
+          <p>Empowering communities through storytelling and collective action</p>
+        </div>
+      </section>
+
+      <section className="mission-section">
+        <div className="mission-content">
+          <h2>Our Mission</h2>
+          <p>
+            We are dedicated to creating a platform where stories of change can inspire action,
+            where communities can connect and collaborate, and where every individual has the
+            opportunity to make a difference in the world.
+          </p>
+        </div>
+      </section>
+
+      <section className="values-section">
+        <h2>Our Values</h2>
+        <div className="values-grid">
+          {values.map((value, index) => (
+            <div key={index} className="value-card">
+              <div className="value-icon">{value.icon}</div>
+              <h3>{value.title}</h3>
+              <p>{value.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="team-section">
+        <h2>Our Team</h2>
+        <div className="team-grid">
+          {teamMembers.map(member => (
+            <div key={member.id} className="team-card">
+              <div className="team-member-image">
+                <img src={member.image} alt={member.name} />
+              </div>
+              <div className="team-member-info">
+                <h3>{member.name}</h3>
+                <span className="role">{member.role}</span>
+                <p>{member.bio}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="contact-section">
+        <h2>Get in Touch</h2>
+        <div className="contact-content">
+          <p>Have questions or want to learn more? We'd love to hear from you.</p>
+          <form className="contact-form">
+            <input type="text" placeholder="Name" />
+            <input type="email" placeholder="Email" />
+            <textarea placeholder="Message"></textarea>
+            <button type="submit" className="btn btn-primary">Send Message</button>
+          </form>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+export default About; 
+
+
+----------------
+Causes.jsx -
+----------------
+import React, { useState } from 'react';
+import { FaHeart, FaHandHoldingHeart, FaUsers, FaGlobe } from 'react-icons/fa';
+
+function Causes() {
+  const [activeTab, setActiveTab] = useState('featured');
+
+  // Mock data for causes
+  const causes = [
+    {
+      id: 1,
+      title: "Environmental Conservation",
+      icon: <FaGlobe />,
+      description: "Protecting our planet's ecosystems and promoting sustainable practices.",
+      impact: "Over 1,000 trees planted and 5,000 kg of waste recycled",
+      supporters: 2500,
+      status: "active"
+    },
+    {
+      id: 2,
+      title: "Education Access",
+      icon: <FaUsers />,
+      description: "Making quality education accessible to underprivileged communities.",
+      impact: "500 students supported with educational resources",
+      supporters: 1800,
+      status: "active"
+    },
+    {
+      id: 3,
+      title: "Healthcare Initiative",
+      icon: <FaHandHoldingHeart />,
+      description: "Providing healthcare services to remote communities.",
+      impact: "Medical camps in 10 villages, reaching 2,000 people",
+      supporters: 3200,
+      status: "active"
+    }
+  ];
+
+  return (
+    <div className="causes-page">
+      <div className="causes-header">
+        <h1>Social Causes</h1>
+        <p>Join us in making a difference. Explore causes that matter to you.</p>
+      </div>
+
+      <div className="causes-tabs">
+        <button
+          className={`tab ${activeTab === 'featured' ? 'active' : ''}`}
+          onClick={() => setActiveTab('featured')}
+        >
+          Featured Causes
+        </button>
+        <button
+          className={`tab ${activeTab === 'all' ? 'active' : ''}`}
+          onClick={() => setActiveTab('all')}
+        >
+          All Causes
+        </button>
+        <button
+          className={`tab ${activeTab === 'new' ? 'active' : ''}`}
+          onClick={() => setActiveTab('new')}
+        >
+          New Causes
+        </button>
+      </div>
+
+      <div className="causes-grid">
+        {causes.map(cause => (
+          <div key={cause.id} className="cause-card">
+            <div className="cause-icon">
+              {cause.icon}
+            </div>
+            <div className="cause-content">
+              <h3>{cause.title}</h3>
+              <p>{cause.description}</p>
+              <div className="cause-impact">
+                <h4>Impact</h4>
+                <p>{cause.impact}</p>
+              </div>
+              <div className="cause-stats">
+                <div className="stat">
+                  <FaHeart />
+                  <span>{cause.supporters} Supporters</span>
+                </div>
+                <div className="stat">
+                  <span className={`status ${cause.status}`}>
+                    {cause.status.charAt(0).toUpperCase() + cause.status.slice(1)}
+                  </span>
+                </div>
+              </div>
+              <div className="cause-actions">
+                <button className="btn btn-primary">Learn More</button>
+                <button className="btn btn-secondary">Support Cause</button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="causes-footer">
+        <button className="btn btn-primary">Start a New Cause</button>
+      </div>
+    </div>
+  );
+}
+
+export default Causes; 
+
+-----------------
+Community.jsx -
+-----------------
+import React, { useState, useEffect } from 'react';
+import { FaUsers, FaComments, FaUserPlus, FaSearch } from 'react-icons/fa';
+import { useAuth } from '../context/AuthContext';
+import Discussion from '../components/Discussion';
+import GroupChat from '../components/GroupChat';
+import '../styles/Community.css';
+
+// Mock member data
+const MOCK_MEMBERS = [
+  {
+    id: 1,
+    name: "Sarah Johnson",
+    avatar: "https://ui-avatars.com/api/?name=Sarah+Johnson&background=random",
+    interests: ["Environmental Protection", "Education", "Social Justice"]
+  },
+  {
+    id: 2,
+    name: "Michael Chen",
+    avatar: "https://ui-avatars.com/api/?name=Michael+Chen&background=random",
+    interests: ["Climate Action", "Healthcare", "Technology"]
+  },
+  {
+    id: 3,
+    name: "Emma Wilson",
+    avatar: "https://ui-avatars.com/api/?name=Emma+Wilson&background=random",
+    interests: ["Animal Rights", "Poverty Alleviation", "Arts"]
+  },
+  {
+    id: 4,
+    name: "David Rodriguez",
+    avatar: "https://ui-avatars.com/api/?name=David+Rodriguez&background=random",
+    interests: ["Immigration Rights", "Food Security", "Community Building"]
+  },
+  {
+    id: 5,
+    name: "Aisha Patel",
+    avatar: "https://ui-avatars.com/api/?name=Aisha+Patel&background=random",
+    interests: ["Women's Rights", "Education", "Healthcare"]
+  }
+];
+
+const Community = () => {
+  const { user } = useAuth(); // Get logged-in user
+  const [activeTab, setActiveTab] = useState('members');
+  const [showDiscussion, setShowDiscussion] = useState(false);
+  const [selectedDiscussion, setSelectedDiscussion] = useState(null);
+  const [members, setMembers] = useState(MOCK_MEMBERS);
+  const [discussions, setDiscussions] = useState([]);
+
+  // Fetch members and discussions from backend on mount
+  useEffect(() => {
+    if (user) {
+      // Create current user data
+      const currentUser = {
+        id: 'current',
+        name: user.name,
+        avatar: user.avatar || `https://ui-avatars.com/api/?name=${user.name}&background=random`,
+        interests: ["Social Impact", "Community"] // Default interests for logged-in user
+      };
+
+      // Add current user to the members list only if not already present
+      setMembers(prevMembers => {
+        // Check if current user already exists in the members list
+        const currentUserExists = prevMembers.some(member => member.id === 'current');
+        if (currentUserExists) {
+          return prevMembers; // Return unchanged if user already exists
+        } else {
+          return [currentUser, ...prevMembers]; // Add user if they don't exist yet
+        }
+      });
+    }
+
+    fetch('/api/community/discussions')
+      .then((res) => res.json())
+      .then((data) => setDiscussions(data))
+      .catch((err) => console.error('Error fetching discussions:', err));
+  }, [user]);
+
+  const handleStartDiscussion = () => {
+    setSelectedDiscussion(null);
+    setShowDiscussion(true);
+  };
+
+  const handleDiscussionClick = (discussion) => {
+    setSelectedDiscussion(discussion);
+    setShowDiscussion(true);
+  };
+
+  const handleJoin = async () => {
+    if (!user) {
+      alert('Please log in to join the community!');
+      return;
+    }
+
+    const newMember = {
+      id: user.id || Date.now(), // Use user.id if available
+      name: user.name,
+      role: 'Community Member', // Default role; adjust as needed
+      avatar: user.avatar || user.name.split(' ').map(n => n[0]).join('').toUpperCase(),
+      discussions: 0,
+      contributions: 0,
+    };
+
+    try {
+      const response = await fetch('/api/community/join', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newMember),
+      });
+      const updatedMembers = await response.json();
+      setMembers(updatedMembers);
+      setActiveTab('members'); // Switch to members section
+    } catch (error) {
+      console.error('Error joining community:', error);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('en-US', options);
+  };
+
+  return (
+    <div className="community-page">
+      <div className="community-header">
+        <h1>Community</h1>
+        <p>Connect and chat with other members</p>
+      </div>
+
+      <div className="community-tabs">
+        <button
+          className={`tab-button ${activeTab === 'chat' ? 'active' : ''}`}
+          onClick={() => setActiveTab('chat')}
+        >
+          <FaComments /> Chat
+        </button>
+        <button
+          className={`tab-button ${activeTab === 'members' ? 'active' : ''}`}
+          onClick={() => setActiveTab('members')}
+        >
+          <FaUsers /> Members
+        </button>
+      </div>
+
+      <div className="community-content">
+        {activeTab === 'chat' ? (
+          <GroupChat />
+        ) : (
+          <div className="members-list">
+            <h2>Community Members</h2>
+            <div className="members-grid">
+              {members.map((member) => (
+                <div key={member.id} className="member-card">
+                  <div className="member-header">
+                    <img 
+                      src={member.avatar} 
+                      alt={member.name} 
+                      className="member-avatar"
+                      onError={(e) => {
+                        e.target.src = `https://ui-avatars.com/api/?name=${member.name}&background=random`;
+                      }}
+                    />
+                    {member.id === 'current' && (
+                      <span className="current-user-badge">You</span>
+                    )}
+                  </div>
+                  <div className="member-info">
+                    <h3>{member.name}</h3>
+                    {member.interests && member.interests.length > 0 && (
+                      <div className="member-interests">
+                        {member.interests.map((interest, index) => (
+                          <span key={index} className="interest-tag">
+                            {interest}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {showDiscussion && (
+        <Discussion 
+          onClose={() => setShowDiscussion(false)} 
+          initialRoom={selectedDiscussion?.category || 'general'}
+        />
+      )}
+    </div>
+  );
+};
+
+export default Community;
+
+----------------------------
+PassionDiscovery.jsx -
+----------------------------
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { FaLightbulb, FaCheck, FaArrowRight, FaSave } from 'react-icons/fa';
+import '../styles/PassionDiscovery.css';
+
+const Discover = () => {
+  const { user } = useAuth();
+  const [currentStep, setCurrentStep] = useState(0);
+  const [answers, setAnswers] = useState({});
+  const [results, setResults] = useState(null);
+  const [savedInterests, setSavedInterests] = useState([]);
+  const [showResults, setShowResults] = useState(false);
+
+  // Quiz questions
+  const questions = [
+    {
+      id: 1,
+      question: "What type of impact do you want to make?",
+      options: [
+        { id: 'environmental', label: "Environmental", value: "environmental" },
+        { id: 'education', label: "Education", value: "education" },
+        { id: 'health', label: "Health & Wellness", value: "health" },
+        { id: 'tech', label: "Technology", value: "tech" },
+        { id: 'community', label: "Community", value: "community" }
+      ]
+    },
+    {
+      id: 2,
+      question: "How do you prefer to take action?",
+      options: [
+        { id: 'hands-on', label: "Hands-on volunteering", value: "hands-on" },
+        { id: 'advocacy', label: "Advocacy and awareness", value: "advocacy" },
+        { id: 'technical', label: "Technical solutions", value: "technical" },
+        { id: 'mentoring', label: "Teaching and mentoring", value: "mentoring" },
+        { id: 'organizing', label: "Community organizing", value: "organizing" }
+      ]
+    },
+    {
+      id: 3,
+      question: "What skills do you want to develop?",
+      options: [
+        { id: 'communication', label: "Communication", value: "communication" },
+        { id: 'technical', label: "Technical skills", value: "technical" },
+        { id: 'leadership', label: "Leadership", value: "leadership" },
+        { id: 'creative', label: "Creative problem-solving", value: "creative" },
+        { id: 'analytical', label: "Analytical thinking", value: "analytical" }
+      ]
+    },
+    {
+      id: 4,
+      question: "How much time can you commit?",
+      options: [
+        { id: 'minimal', label: "A few hours per month", value: "minimal" },
+        { id: 'moderate', label: "A few hours per week", value: "moderate" },
+        { id: 'substantial', label: "Several hours per week", value: "substantial" },
+        { id: 'full-time', label: "Full-time commitment", value: "full-time" },
+        { id: 'flexible', label: "Flexible, project-based", value: "flexible" }
+      ]
+    },
+    {
+      id: 5,
+      question: "What motivates you the most?",
+      options: [
+        { id: 'innovation', label: "Innovation and creativity", value: "innovation" },
+        { id: 'education', label: "Learning and teaching", value: "education" },
+        { id: 'community', label: "Community building", value: "community" },
+        { id: 'sustainability', label: "Environmental sustainability", value: "sustainability" },
+        { id: 'health', label: "Health and wellbeing", value: "health" }
+      ]
+    }
+  ];
+
+  // Load saved interests from localStorage if user is logged in
+  useEffect(() => {
+    if (user) {
+      const saved = localStorage.getItem(`interests_${user.uid}`);
+      if (saved) {
+        setSavedInterests(JSON.parse(saved));
+      }
+    }
+  }, [user]);
+
+  const handleAnswer = (questionId, value) => {
+    setAnswers({
+      ...answers,
+      [questionId]: value
+    });
+  };
+
+  const handleNext = () => {
+    if (currentStep < questions.length - 1) {
+      setCurrentStep(currentStep + 1);
+    } else {
+      // Calculate results based on answers
+      calculateResults();
+    }
+  };
+
+  const handleBack = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const calculateResults = () => {
+    const impactType = answers[1] || 'environmental';
+    const actionType = answers[2] || 'hands-on';
+    const skillType = answers[3] || 'communication';
+    
+    const causes = [
+      {
+        id: 1,
+        title: "Environmental Conservation",
+        description: "Protect ecosystems and promote sustainable practices",
+        match: impactType === 'environmental' ? 100 : 20,
+        icon: "🌱",
+        resources: [
+          { title: "Environmental Protection Agency", url: "https://www.epa.gov/" },
+          { title: "World Wildlife Fund", url: "https://www.worldwildlife.org/" },
+          { title: "Local Conservation Groups", url: "#" }
+        ]
+      },
+      {
+        id: 2,
+        title: "Education Access",
+        description: "Improve educational opportunities for all communities",
+        match: impactType === 'education' ? 100 : 30,
+        icon: "📚",
+        resources: [
+          { title: "UNESCO Education", url: "https://en.unesco.org/themes/education" },
+          { title: "Khan Academy", url: "https://www.khanacademy.org/" },
+          { title: "Local Education Initiatives", url: "#" }
+        ]
+      },
+      {
+        id: 3,
+        title: "Public Health Initiatives",
+        description: "Improve health outcomes and access to healthcare",
+        match: impactType === 'health' ? 100 : 25,
+        icon: "🏥",
+        resources: [
+          { title: "World Health Organization", url: "https://www.who.int/" },
+          { title: "Global Health Corps", url: "https://ghcorps.org/" },
+          { title: "Local Health Organizations", url: "#" }
+        ]
+      },
+      {
+        id: 4,
+        title: "Technology for Good",
+        description: "Use technology to create positive social impact",
+        match: impactType === 'tech' ? 100 : 20,
+        icon: "💻",
+        resources: [
+          { title: "Tech for Good", url: "https://www.techforgood.global/" },
+          { title: "Code for Good", url: "https://www.codeforgood.org/" },
+          { title: "Local Tech Communities", url: "#" }
+        ]
+      },
+      {
+        id: 5,
+        title: "Community Development",
+        description: "Build stronger, more resilient communities",
+        match: impactType === 'community' ? 100 : 25,
+        icon: "🤝",
+        resources: [
+          { title: "Community Tool Box", url: "https://ctb.ku.edu/" },
+          { title: "United Way", url: "https://www.unitedway.org/" },
+          { title: "Local Community Centers", url: "#" }
+        ]
+      }
+    ];
+
+    // Sort causes by match percentage
+    const sortedCauses = causes.sort((a, b) => b.match - a.match);
+    
+    setResults(sortedCauses);
+    setShowResults(true);
+  };
+
+  const saveInterest = (causeId) => {
+    if (!user) {
+      alert("Please log in to save your interests");
+      return;
+    }
+
+    const cause = results.find(c => c.id === causeId);
+    if (!cause) return;
+
+    const newInterest = {
+      id: causeId,
+      title: cause.title,
+      date: new Date().toISOString(),
+      match: cause.match
+    };
+
+    const updatedInterests = [...savedInterests, newInterest];
+    setSavedInterests(updatedInterests);
+    
+    // Save to localStorage
+    localStorage.setItem(`interests_${user.uid}`, JSON.stringify(updatedInterests));
+  };
+
+  const resetQuiz = () => {
+    setCurrentStep(0);
+    setAnswers({});
+    setResults(null);
+    setShowResults(false);
+  };
+
+  return (
+    <div className="passion-discovery-page">
+      <div className="passion-header">
+        <h1>Discover Your Passion</h1>
+        <p>Find causes that align with your values and interests</p>
+      </div>
+
+      {!showResults ? (
+        <div className="quiz-container">
+          <div className="quiz-progress">
+            <div 
+              className="progress-bar" 
+              style={{ width: `${(currentStep / questions.length) * 100}%` }}
+            ></div>
+            <div className="progress-text">
+              Question {currentStep + 1} of {questions.length}
+            </div>
+          </div>
+
+          <div className="question-card">
+            <h2>{questions[currentStep].question}</h2>
+            <div className="options-grid">
+              {questions[currentStep].options.map((option) => (
+                <button
+                  key={option.id}
+                  className={`option-button ${answers[questions[currentStep].id] === option.value ? 'selected' : ''}`}
+                  onClick={() => handleAnswer(questions[currentStep].id, option.value)}
+                >
+                  {option.label}
+                  {answers[questions[currentStep].id] === option.value && (
+                    <FaCheck className="check-icon" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="quiz-navigation">
+            <button 
+              className="back-button" 
+              onClick={handleBack}
+              disabled={currentStep === 0}
+            >
+              Back
+            </button>
+            <button 
+              className="next-button" 
+              onClick={handleNext}
+              disabled={!answers[questions[currentStep].id]}
+            >
+              {currentStep === questions.length - 1 ? 'See Results' : 'Next'}
+              <FaArrowRight />
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="results-container">
+          <h2>Your Recommended Causes</h2>
+          <p>Based on your answers, here are causes that might interest you:</p>
+          
+          <div className="causes-grid">
+            {results.map((cause) => (
+              <div key={cause.id} className="cause-card">
+                <div className="cause-icon">{cause.icon}</div>
+                <h3>{cause.title}</h3>
+                <p>{cause.description}</p>
+                <div className="match-percentage">
+                  <div className="match-bar">
+                    <div 
+                      className="match-fill" 
+                      style={{ width: `${cause.match}%` }}
+                    ></div>
+                  </div>
+                  <span>{cause.match}% match</span>
+                </div>
+                <div className="cause-resources">
+                  <h4>Resources:</h4>
+                  <ul>
+                    {cause.resources.map((resource, index) => (
+                      <li key={index}>
+                        <a href={resource.url} target="_blank" rel="noopener noreferrer">
+                          {resource.title}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <button 
+                  className="save-interest-button"
+                  onClick={() => saveInterest(cause.id)}
+                >
+                  <FaSave /> Save Interest
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <div className="results-actions">
+            <button className="reset-button" onClick={resetQuiz}>
+              Take Quiz Again
+            </button>
+          </div>
+        </div>
+      )}
+
+      {user && savedInterests.length > 0 && (
+        <div className="saved-interests">
+          <h2>Your Saved Interests</h2>
+          <div className="interests-list">
+            {savedInterests.map((interest) => (
+              <div key={interest.id} className="interest-item">
+                <FaLightbulb className="interest-icon" />
+                <div className="interest-details">
+                  <h3>{interest.title}</h3>
+                  <p>Saved on {new Date(interest.date).toLocaleDateString()}</p>
+                  <div className="match-tag">{interest.match}% match</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Discover;
+
+
+
+-------------------
+ActionHub.jsx -
+-------------------
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import '../styles/ActionHub.css';
+
+const Hub = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [filteredResources, setFilteredResources] = useState([]);
+
+  const categories = [
+    { id: 'all', name: 'All Categories' },
+    { id: 'environment', name: 'Environment' },
+    { id: 'education', name: 'Education' },
+    { id: 'health', name: 'Health' },
+    { id: 'tech', name: 'Technology' },
+    { id: 'community', name: 'Community' }
+  ];
+
+  const resources = [
+    {
+      id: 1,
+      name: 'Green Earth Initiative',
+      category: 'environment',
+      description: 'Working towards environmental conservation and sustainable development.',
+      location: 'New York, USA',
+      website: 'https://greenearth.org',
+      contact: 'contact@greenearth.org',
+      impact: 'Over 1 million trees planted',
+      rating: 4.8
+    },
+    {
+      id: 2,
+      name: 'Global Education Foundation',
+      category: 'education',
+      description: 'Providing quality education to underprivileged children worldwide.',
+      location: 'London, UK',
+      website: 'https://globaledu.org',
+      contact: 'info@globaledu.org',
+      impact: 'Educated 50,000+ children',
+      rating: 4.9
+    },
+    {
+      id: 3,
+      name: 'Health for All',
+      category: 'health',
+      description: 'Improving healthcare access in developing countries.',
+      location: 'Geneva, Switzerland',
+      website: 'https://healthforall.org',
+      contact: 'support@healthforall.org',
+      impact: 'Treated 100,000+ patients',
+      rating: 4.7
+    },
+    {
+      id: 4,
+      name: 'Tech for Good',
+      category: 'tech',
+      description: 'Using technology to solve social and environmental challenges.',
+      location: 'San Francisco, USA',
+      website: 'https://techforgood.org',
+      contact: 'hello@techforgood.org',
+      impact: 'Developed 100+ social impact solutions',
+      rating: 4.8
+    },
+    {
+      id: 5,
+      name: 'Community Builders Network',
+      category: 'community',
+      description: 'Strengthening local communities through grassroots initiatives.',
+      location: 'Toronto, Canada',
+      website: 'https://communitybuilders.org',
+      contact: 'connect@communitybuilders.org',
+      impact: 'Supported 1,000+ community projects',
+      rating: 4.6
+    }
+  ];
+
+  useEffect(() => {
+    filterResources();
+  }, [searchQuery, selectedCategory]);
+
+  const filterResources = () => {
+    let filtered = resources;
+
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter(resource => resource.category === selectedCategory);
+    }
+
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(resource =>
+        resource.name.toLowerCase().includes(query) ||
+        resource.description.toLowerCase().includes(query) ||
+        resource.location.toLowerCase().includes(query)
+      );
+    }
+
+    setFilteredResources(filtered);
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.5
+      }
+    }
+  };
+
+  return (
+    <div className="action-hub-page">
+      <div className="action-hub-header">
+        <h1>Action Hub</h1>
+        <p>Find and connect with organizations making a difference</p>
+      </div>
+
+      <div className="search-filters">
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Search organizations..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="search-input"
+          />
+        </div>
+
+        <div className="category-filters">
+          {categories.map(category => (
+            <button
+              key={category.id}
+              className={`category-button ${selectedCategory === category.id ? 'active' : ''}`}
+              onClick={() => setSelectedCategory(category.id)}
+            >
+              {category.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <motion.div
+        className="resources-grid"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        {filteredResources.map(resource => (
+          <motion.div
+            key={resource.id}
+            className="resource-card"
+            variants={itemVariants}
+            whileHover={{ y: -5 }}
+          >
+            <div className="resource-header">
+              <h3>{resource.name}</h3>
+              <div className="rating">
+                <span>★</span>
+                {resource.rating}
+              </div>
+            </div>
+
+            <p className="resource-description">{resource.description}</p>
+
+            <div className="resource-details">
+              <div className="detail-item">
+                <span className="detail-label">Location:</span>
+                <span>{resource.location}</span>
+              </div>
+              <div className="detail-item">
+                <span className="detail-label">Impact:</span>
+                <span>{resource.impact}</span>
+              </div>
+            </div>
+
+            <div className="resource-actions">
+              <a
+                href={resource.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="action-button website"
+              >
+                Visit Website
+              </a>
+              <a
+                href={`mailto:${resource.contact}`}
+                className="action-button contact"
+              >
+                Contact
+              </a>
+            </div>
+          </motion.div>
+        ))}
+      </motion.div>
+
+      {filteredResources.length === 0 && (
+        <div className="no-results">
+          <h3>No organizations found</h3>
+          <p>Try adjusting your search or filters</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Hub; 
+
+
+
+--------------------------
+ContentLibrary.jsx -
+--------------------------
+import React, { useState, useEffect } from 'react';
+import { FaPlay, FaBook, FaNewspaper, FaVideo, FaTv, FaSearch } from 'react-icons/fa';
+import axios from 'axios';
+
+const ContentLibrary = () => {
+  const [activeTab, setActiveTab] = useState('talks');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [content, setContent] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [dailyUpdates, setDailyUpdates] = useState([]);
+  const [error, setError] = useState(null);
+  const [lastUpdateTime, setLastUpdateTime] = useState(new Date());
+
+  const contentCategories = [
+    { id: 'talks', label: 'TED Talks', icon: <FaPlay /> },
+    { id: 'documentaries', label: 'Documentaries', icon: <FaTv /> },
+    { id: 'books', label: 'Books', icon: <FaBook /> },
+    { id: 'articles', label: 'Articles', icon: <FaNewspaper /> },
+  ];
+
+  const contentItems = {
+    talks: [
+      {
+        id: 'ted1',
+        title: 'How to Build a Global Pro-Democracy Movement',
+        speaker: 'Yordanos Eyoel',
+        thumbnail: '/images/yordanos-ted-talk.jpg.png',
+        duration: '12:47',
+        views: '597K',
+        date: 'October 2023',
+        link: 'https://www.ted.com/talks/yordanos_eyoel_how_to_build_a_global_pro_democracy_movement'
+      },
+      {
+        id: 'ted3',
+        title: 'Changing education paradigms',
+        thumbnail: '/images/image3.png',
+        speaker: 'Sir Ken Robinson',
+        duration: '11:41',
+        views: '2,640,097',
+        date: 'October 2010',
+        link: 'https://www.ted.com/talks/sir_ken_robinson_changing_education_paradigms'
+      },
+      {
+        id: 'ted4',
+        title: 'The bias behind your undiagnosed chronic pain',
+        thumbnail: '/images/image4.png',
+        speaker: 'Shoshana Ungerleider',
+        duration: '19:36',
+        views: '514,314',
+        date: 'September 2022',
+        link: 'https//www.ted.com/talks/ted_health_the_bias_behind_your_undiagnosed_chronic_pain'
+      },
+    ],
+    documentaries: [
+      {
+        id: 1,
+        title: 'Climate change - Averting catastrophe | DW Documentary',
+        thumbnail: './images/doc/image1.png',
+        duration: '45:00',
+        views: 5678,
+        date: '2023-06-15',
+        link: 'https://www.youtube.com/watch?v=pEt6-jA2UE4'
+      },
+      {
+        id: 2,
+        title: 'Technology Revolution',
+        thumbnail: './images/doc/image2.png',
+        duration: '52:30',
+        views: 4321,
+        date: '2023-06-14',
+        link:'https://www.youtube.com/watch?v=-sB12gk9ESA'
+      },
+    ],
+    books: [
+      {
+        id: 1,
+        title: 'The Power of Community',
+        author: 'Darius Foroux',
+        thumbnail: './images/book/image1.png',
+        rating: 4.8,
+        reviews: 156,
+        date: '2023-06-15',
+      },
+      {
+        id: 2,
+        title: 'Making a Difference',
+        author: 'Shubham Kumar Singh',
+        thumbnail: './images/book/image2.png',
+        rating: 4.6,
+        reviews: 98,
+        date: '2023-06-14',
+      },
+    ],
+    articles: [
+      {
+        id: 1,
+        title: '10 Ways to Make a Difference in Your Community',
+        author: 'Emma Wilson',
+        thumbnail: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg',
+        readTime: '5 min',
+        views: 2345,
+        date: '2023-06-15',
+      },
+      {
+        id: 2,
+        title: 'The Science Behind Social Change',
+        author: 'David Brown',
+        thumbnail: 'https://images.pexels.com/photos/2255935/pexels-photo-2255935.jpeg',
+        readTime: '8 min',
+        views: 1876,
+        date: '2023-06-14',
+      },
+    ],
+  };
+
+  const getFilteredContent = () => {
+    if (!content || !contentItems) return [];
+
+    const activeContent = contentItems[activeTab] || [];
+    return activeContent.filter(item =>
+      item.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  };
+
+  const fetchTEDTalks = async () => {
+    try {
+      setLoading(true);
+      // const API_KEY = 'YOUR_API_KEY'; // Replace with your new API key 2 ,brave
+      
+      const response = await axios.get(
+        'https://www.googleapis.com/youtube/v3/search',
+        {
+          params: {
+            part: 'snippet',
+            channelId: 'UCAuUUnT6oDeKwE6v1NGQxug', // TED's YouTube channel ID
+            type: 'video',
+            order: 'date', // Get most recent videos
+            maxResults: 5,
+            key: API_KEY
+          }
+        }
+      );
+
+      if (response.data.items) {
+        const tedTalks = response.data.items.map(video => ({
+          id: video.id.videoId,
+          title: video.snippet.title,
+          thumbnail: video.snippet.thumbnails.high.url,
+          description: video.snippet.description,
+          publishedAt: video.snippet.publishedAt,
+          link: `https://www.youtube.com/watch?v=${video.id.videoId}`
+        }));
+        setDailyUpdates(tedTalks);
+        setLastUpdateTime(new Date());
+      }
+    } catch (err) {
+      console.error('Error fetching TED talks:', err);
+      setError('Failed to fetch latest TED talks');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTEDTalks();
+
+    // Set up auto-refresh every 6 hours
+    const refreshInterval = setInterval(fetchTEDTalks, 6 * 60 * 60 * 1000);
+
+    return () => clearInterval(refreshInterval);
+  }, []);
+
+  const filteredContent = getFilteredContent();
+
+  return (
+    <div className="content-library-page">
+      {/* <div className="content-header">
+        <h1>Content Library</h1>
+        <p>Discover curated content to help you learn, grow, and make a difference</p>
+      </div> */}
+
+      <div className="content-controls">
+        <div className="search-bar">
+          <FaSearch />
+          <input
+            type="text"
+            placeholder="Search content..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+        <div className="content-tabs">
+          {contentCategories.map(category => (
+            <button
+              key={category.id}
+              className={`tab ${activeTab === category.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(category.id)}
+            >
+              {category.icon}
+              <span>{category.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="content-grid">
+        {loading ? (
+          <div className="loading">Loading content...</div>
+        ) : (
+          filteredContent.map(item => (
+            <div 
+              key={item.id} 
+              className="content-card"
+              onClick={() => item.link && window.open(item.link, '_blank')}
+              style={{ cursor: item.link ? 'pointer' : 'default' }}
+            >
+              <div className="content-thumbnail">
+                <img 
+                  src={item.thumbnail} 
+                  alt={item.title}
+                  loading="lazy"
+                  onError={(e) => {
+                    if (!e.target.dataset.tried) {
+                      e.target.dataset.tried = true;
+                      e.target.src = '/images/yordanos-ted-talk.jpg';
+                    }
+                  }}
+                />
+                {item.duration && (
+                  <div className="duration">{item.duration}</div>
+                )}
+              </div>
+              <div className="content-info">
+                <h3>{item.title}</h3>
+                {item.speaker && <p className="speaker">Speaker: {item.speaker}</p>}
+                <div className="content-meta">
+                  {item.views && <span>{item.views} views</span>}
+                  <span>{item.date}</span>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      <div className="daily-update">
+        <h2>Daily TED Talk Updates</h2>
+        <p>Latest inspiring talks from TED, updated regularly.</p>
+        
+        {loading && <div className="loading">Loading latest TED talks...</div>}
+        
+        {error && <div className="error">{error}</div>}
+        
+        {!loading && !error && (
+          <div className="ted-talks-grid">
+            {dailyUpdates.map(talk => (
+              <div key={talk.id} className="content-card" onClick={() => window.open(talk.link, '_blank')}>
+                <div className="content-thumbnail">
+                  <img src={talk.thumbnail} alt={talk.title} />
+                </div>
+                <div className="content-info">
+                  <h3>{talk.title}</h3>
+                  <div className="content-meta">
+                    <span>TED</span>
+                    <span>{new Date(talk.publishedAt).toLocaleDateString()}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="update-timestamp">
+          Last updated: {lastUpdateTime.toLocaleString()}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ContentLibrary;
+
+
+-------------
+Home.jsx -
+-------------
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { FaPlay, FaLightbulb, FaUsers, FaGlobeAmericas, FaRocket } from 'react-icons/fa';
+import '../styles/Home.css';
+
+const Home = () => {
+  // Animation variants
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut"
+      }
+    }
+  };
+
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
+  };
+
+  const statsData = [
+    { number: "1000+", label: "Impact Stories" },
+    { number: "25+", label: "Categories" },
+    { number: "100+", label: "Content Partners" },
+    { number: "2k+", label: "Learning Resources" }
+  ];
+
+  const features = [
+    {
+      icon: <FaLightbulb />,
+      title: "Find Your Passion",
+      description: "Discover causes that resonate with your values and interests"
+    },
+    {
+      icon: <FaUsers />,
+      title: "Learn & Grow",
+      description: "Access curated resources and expert insights"
+    },
+    {
+      icon: <FaGlobeAmericas />,
+      title: "Connect Globally",
+      description: "Join a worldwide community of changemakers"
+    },
+    {
+      icon: <FaRocket />,
+      title: "Take Action",
+      description: "Turn inspiration into meaningful impact"
+    }
+  ];
+
+  return (
+    <div className="home-container">
+      <motion.section 
+        className="hero-section"
+        initial="hidden"
+        animate="visible"
+        variants={staggerContainer}
+      >
+        <motion.div 
+          className="discover-badge"
+          variants={fadeInUp}
+        >
+          Discover stories that inspire change
+        </motion.div>
+
+        <motion.h1 variants={fadeInUp}>
+          Welcome to <span>StorySpark</span>
+        </motion.h1>
+
+        <motion.p variants={fadeInUp}>
+          Empowering change through stories that connect hearts, minds, and
+          communities across the globe.
+        </motion.p>
+
+        <motion.div
+          className="cta-buttons"
+          variants={fadeInUp}
+        >
+          <Link to="/get-started" className="primary-button">
+            Get Started
+          </Link>
+          <Link to="/learn-more" className="secondary-button">
+            Learn More
+          </Link>
+        </motion.div>
+
+        <motion.div 
+          className="community-image-section"
+          variants={fadeInUp}
+        >
+          <img
+            src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg"
+            alt="Community collaboration"
+            className="community-image"
+          />
+          <motion.div 
+            className="play-button"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <FaPlay />
+          </motion.div>
+          <div className="online-status">
+            2,500+ changemakers online now
+          </div>
+        </motion.div>
+      </motion.section>
+
+      <motion.section 
+        className="stats-section"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+        variants={staggerContainer}
+      >
+        <div className="stats-grid">
+          {statsData.map((stat, index) => (
+            <motion.div 
+              key={index}
+              className="stat-card"
+              variants={fadeInUp}
+              whileHover={{ y: -8, boxShadow: "0px 12px 24px rgba(0, 0, 0, 0.12)" }}
+            >
+              <h2>{stat.number}</h2>
+              <p>{stat.label}</p>
+            </motion.div>
+          ))}
+        </div>
+      </motion.section>
+
+      <motion.section 
+        className="how-it-works"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+        variants={staggerContainer}
+      >
+        <motion.h2 
+          className="section-title"
+          variants={fadeInUp}
+        >
+          How StorySpark Works
+        </motion.h2>
+        <div className="features-grid">
+          {features.map((feature, index) => (
+            <motion.div 
+              key={index}
+              className="feature-card"
+              variants={fadeInUp}
+              whileHover={{ y: -8, boxShadow: "0px 12px 24px rgba(0, 0, 0, 0.12)" }}
+            >
+              <motion.div 
+                className="feature-icon"
+                whileHover={{ rotate: 360 }}
+                transition={{ duration: 0.6 }}
+              >
+                {feature.icon}
+              </motion.div>
+              <h3>{feature.title}</h3>
+              <p>{feature.description}</p>
+            </motion.div>
+          ))}
+        </div>
+      </motion.section>
+
+      <motion.section 
+        className="cta-section"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={staggerContainer}
+      >
+        <motion.h2 variants={fadeInUp}>
+          Ready to Make a Difference?
+        </motion.h2>
+        <motion.p variants={fadeInUp}>
+          Join our community of changemakers today
+        </motion.p>
+        <motion.div variants={fadeInUp}>
+          <Link to="/map" className="cta-button">
+            Connect Now
+          </Link>
+        </motion.div>
+      </motion.section>
+    </div>
+  );
+};
+
+export default Home; 
+
+
+--------------
+Login.jsx -
+--------------
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+
+function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setIsLoading(true);
+
+    try {
+      await login(email, password);
+      navigate('/');
+    } catch (err) {
+      setError('Failed to sign in. Please check your credentials.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="auth-container">
+      <div className="auth-card">
+        <h2>Welcome Back</h2>
+        <p>Sign in to your account to continue</p>
+        
+        {error && <div className="error-message">{error}</div>}
+        
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder="Enter your email"
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              placeholder="Enter your password"
+            />
+          </div>
+          
+          <button 
+            type="submit" 
+            className="btn btn-primary"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <span className="spinner">↻</span>
+            ) : (
+              'Sign In'
+            )}
+          </button>
+        </form>
+        
+        <div className="auth-footer">
+          <p>Don't have an account?</p>
+          <a href="/register">Create an account</a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Login; 
+
+
+------------------
+LoginPage.jsx -
+------------------
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode';
+import '../styles/LoginPage.css';
+
+function LoginPage() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const { login, loginWithGoogle } = useAuth();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setIsLoading(true);
+
+    try {
+      // Create a user object with avatar and name
+      const userData = {
+        email,
+        name: email.split('@')[0], // Using email username as display name
+        avatar: `https://ui-avatars.com/api/?name=${email.split('@')[0]}&background=random`, // Generate avatar from name
+      };
+      await login(userData);
+      navigate('/');
+    } catch (err) {
+      setError('Failed to sign in. Please check your credentials.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      const decoded = jwtDecode(credentialResponse.credential);
+      const userData = {
+        email: decoded.email,
+        name: decoded.name,
+        avatar: decoded.picture || `https://ui-avatars.com/api/?name=${decoded.name}&background=random`,
+      };
+      await loginWithGoogle(userData);
+      navigate('/');
+    } catch (error) {
+      setError('Failed to sign in with Google');
+      console.error('Google login error:', error);
+    }
+  };
+
+  const handleGoogleError = () => {
+    setError('Failed to sign in with Google');
+  };
+
+  return (
+    <div className="auth-container">
+      <div className="auth-card">
+        <h2>Welcome Back</h2>
+        <p>Sign in to your account to continue</p>
+        
+        {error && <div className="error-message">{error}</div>}
+        
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder="Enter your email"
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              placeholder="Enter your password"
+            />
+          </div>
+          
+          <button 
+            type="submit" 
+            className="btn btn-primary"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <span className="spinner">↻</span>
+            ) : (
+              'Sign In'
+            )}
+          </button>
+
+          <div className="divider">
+            <span>OR</span>
+          </div>
+
+          <div className="google-signin">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              type="standard"
+              theme="filled_blue"
+              size="large"
+              width="250"
+              text="signin_with"
+              shape="rectangular"
+            />
+          </div>
+        </form>
+        
+        <div className="auth-footer">
+          <p>Don't have an account?</p>
+          <a href="/register">Create an account</a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default LoginPage; 
+
+
+---------------
+Map.jsx -
+---------------
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { Link, useNavigate } from 'react-router-dom';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+import { ref, push, set, get, onValue } from 'firebase/database';
+import { database } from '../config/firebase';
+
+// Fix for default marker icons in Leaflet with React
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
+
+function MapController({ selectedUser }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (selectedUser) {
+      map.setView(
+        [selectedUser.location.lat, selectedUser.location.lng],
+        5,  // Fixed zoom level when selecting a user
+        {
+          animate: true,
+          duration: 1
+        }
+      );
+    }
+  }, [selectedUser, map]);
+
+  return null;
+}
+
+function Map() {
+  const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [connections, setConnections] = useState({});
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const closeButtonStyle = {
+    background: 'white',
+    border: '1px solid #ddd',
+    borderRadius: '50%',
+    width: '28px',
+    height: '28px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '18px',
+    lineHeight: '1',
+    cursor: 'pointer',
+    padding: '0',
+    color: '#666',
+    transition: 'all 0.2s ease',
+  };
+
+  // Mock data for demonstration
+  useEffect(() => {
+    // In a real app, this would be an API call
+    const mockUsers = [
+      {
+        id: 'mock_1',
+        name: 'Sarah Johnson',
+        location: { lat: 40.7128, lng: -74.0060 },
+        interests: ['Environmental Protection', 'Education', 'Social Justice'],
+        avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg'
+      },
+      {
+        id: 'mock_2',
+        name: 'Michael Chen',
+        location: { lat: 34.0522, lng: -118.2437 },
+        interests: ['Climate Action', 'Healthcare', 'Technology'],
+        avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg'
+      },
+      {
+        id: 'mock_3',
+        name: 'Emma Wilson',
+        location: { lat: 51.5074, lng: -0.1278 },
+        interests: ['Animal Rights', 'Poverty Alleviation', 'Arts'],
+        avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg'
+      },
+      {
+        id: 'mock_4',
+        name: 'David Rodriguez',
+        location: { lat: 41.9028, lng: 12.4964 },
+        interests: ['Immigration Rights', 'Food Security', 'Community Building'],
+        avatar: 'https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg'
+      },
+      {
+        id: 'mock_5',
+        name: 'Aisha Patel',
+        location: { lat: 28.6139, lng: 77.2090 },
+        interests: ['Women\'s Rights', 'Education', 'Healthcare'],
+        avatar: 'https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg'
+      }
+    ];
+
+    setTimeout(() => {
+      setUsers(mockUsers);
+      setLoading(false);
+    }, 1000);
+
+    // Load existing connections
+    if (user) {
+      const connectionsRef = ref(database, `connections/${user.uid}`);
+      
+      return onValue(connectionsRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data && typeof data === 'object') {
+          // Only include valid, explicitly created connections
+          const validConnections = {};
+          Object.entries(data).forEach(([key, value]) => {
+            if (value && 
+                value.userId && 
+                value.name && 
+                value.timestamp && 
+                value.roomId) {
+              validConnections[value.userId] = value;
+            }
+          });
+          setConnections(validConnections);
+        } else {
+          setConnections({});
+        }
+      });
+    } else {
+      setConnections({});
+    }
+  }, [user]);
+
+  const handleUserClick = (selectedUser) => {
+    setSelectedUser(selectedUser);
+  };
+
+  // Handle connect to navigate to community chat
+  const handleConnectAndChat = (targetUser) => {
+    if (!user) {
+      alert('Please sign in to connect with other users');
+      return;
+    }
+
+    handleConnect(targetUser);
+    
+    // Navigate to the community page with chat tab active
+    navigate('/community?tab=chat&user=' + targetUser.name);
+  };
+
+  const handleConnect = async (targetUser) => {
+    if (!user) {
+      alert('Please sign in to connect with other users');
+      return;
+    }
+
+    try {
+      // Create a consistent room ID format
+      const roomId = [user.uid, targetUser.id].sort().join('_');
+      
+      // Check if connection already exists
+      const userConnectionRef = ref(database, `connections/${user.uid}/${targetUser.id}`);
+      const targetConnectionRef = ref(database, `connections/${targetUser.id}/${user.uid}`);
+      
+      // Get existing connection
+      const existingConnection = await get(userConnectionRef);
+      if (existingConnection.exists()) {
+        return;
+      }
+
+      // Create the private chat room
+      const roomRef = ref(database, `privateRooms/${roomId}`);
+      
+      // Prepare connection data with explicit timestamp
+      const timestamp = Date.now();
+      const userConnectionData = {
+        userId: targetUser.id,
+        name: targetUser.name,
+        avatar: targetUser.avatar,
+        roomId: roomId,
+        timestamp: timestamp,
+        isExplicitlyConnected: true // Add flag to mark explicit connections
+      };
+      
+      const targetConnectionData = {
+        userId: user.uid,
+        name: user.displayName || user.name || 'Anonymous',
+        avatar: user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName || 'Anonymous'}&background=random`,
+        roomId: roomId,
+        timestamp: timestamp,
+        isExplicitlyConnected: true // Add flag to mark explicit connections
+      };
+
+      await Promise.all([
+        set(userConnectionRef, userConnectionData),
+        set(targetConnectionRef, targetConnectionData),
+        set(roomRef, {
+          participants: {
+            [user.uid]: true,
+            [targetUser.id]: true
+          },
+          createdAt: timestamp,
+          isExplicitlyCreated: true // Add flag to mark explicit room creation
+        })
+      ]);
+
+    } catch (error) {
+      console.error('Error connecting with user:', error);
+      alert('Failed to connect with user. Please try again.');
+    }
+  };
+
+  const isConnected = (targetUserId) => {
+    return Boolean(
+      connections && 
+      typeof connections === 'object' && 
+      connections[targetUserId] && 
+      connections[targetUserId].isExplicitlyConnected === true // Only consider explicit connections
+    );
+  };
+
+  return (
+    <div className="map-page">
+      <div className="map-header">
+        <h1>Connect with Like-Minded People</h1>
+        <p>Find people with similar interests and causes near you</p>
+      </div>
+
+      <div className="map-container">
+        <div className="map-sidebar">
+          <h2>People Near You</h2>
+          {loading ? (
+            <div className="loading">Loading map data...</div>
+          ) : (
+            <div className="users-list">
+              {users.map((mapUser) => (
+                <div 
+                  key={mapUser.id} 
+                  className={`user-card ${selectedUser?.id === mapUser.id ? 'selected' : ''}`}
+                  onClick={() => handleUserClick(mapUser)}
+                >
+                  <img src={mapUser.avatar} alt={mapUser.name} className="user-avatar" />
+                  <div className="user-info">
+                    <h3>{mapUser.name}</h3>
+                    <div className="interests">
+                      {mapUser.interests.map((interest, index) => (
+                        <span key={index} className="interest-tag">{interest}</span>
+                      ))}
+                    </div>
+                    {user && user.uid !== mapUser.id && (
+                      <div className="button-group">
+                        <button
+                          className={`connect-button ${isConnected(mapUser.id) ? 'connected' : ''}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (!isConnected(mapUser.id)) {
+                              handleConnect(mapUser);
+                            }
+                          }}
+                          disabled={isConnected(mapUser.id)}
+                        >
+                          {isConnected(mapUser.id) ? 'Connected' : 'Connect'}
+                        </button>
+                        
+                        <Link to={`/community?tab=chat&user=${mapUser.name}`} className="chat-link">
+                          <button
+                            className="chat-button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (!isConnected(mapUser.id)) {
+                                handleConnect(mapUser);
+                              }
+                            }}
+                          >
+                            Chat
+                          </button>
+                        </Link>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="map-view">
+          {loading ? (
+            <div className="map-placeholder">Loading map...</div>
+          ) : (
+            <div className="map-visualization">
+              <MapContainer 
+                center={[30, 0]} 
+                zoom={3} 
+                minZoom={2}
+                maxBounds={[[-90, -180], [90, 180]]}
+                style={{ height: '100%', width: '100%' }}
+              >
+                <MapController selectedUser={selectedUser} />
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                {users.map((mapUser) => (
+                  <Marker 
+                    key={mapUser.id}
+                    position={[mapUser.location.lat, mapUser.location.lng]}
+                    eventHandlers={{
+                      click: () => handleUserClick(mapUser),
+                    }}
+                  >
+                    <Popup>
+                      <div className="marker-popup">
+                        <div className="popup-header" style={{ position: 'relative' }}>
+                          <img src={mapUser.avatar} alt={mapUser.name} className="popup-avatar" style={{ width: '30px', height: '30px', borderRadius: '50%', marginRight: '8px' }} />
+                          <h3 style={{ fontSize: '14px', margin: '0' }}>{mapUser.name}</h3>
+                        </div>
+                        <div className="interests" style={{ marginTop: '4px', fontSize: '12px' }}>
+                          {mapUser.interests.slice(0, 2).map((interest, index) => (
+                            <span key={index} className="interest-tag" style={{ padding: '2px 6px', margin: '0 2px', background: 'rgba(0,0,0,0.05)', borderRadius: '4px' }}>
+                              {interest}
+                            </span>
+                          ))}
+                          {mapUser.interests.length > 2 && 
+                            <span style={{ fontSize: '11px', color: '#666' }}>+{mapUser.interests.length - 2} more</span>
+                          }
+                        </div>
+                      </div>
+                    </Popup>
+                  </Marker>
+                ))}
+              </MapContainer>
+            </div>
+          )}
+        </div>
+
+        <div className={`user-details ${selectedUser ? 'visible' : ''}`}>
+          {selectedUser ? (
+            <>
+              <div className="user-details-header">
+                <h2>User Profile</h2>
+                <button 
+                  className="btn-close"
+                  onClick={() => setSelectedUser(null)}
+                  style={closeButtonStyle}
+                >
+                  ×
+                </button>
+              </div>
+              <div className="user-profile">
+                <img src={selectedUser.avatar} alt={selectedUser.name} className="profile-avatar" />
+                <h3>{selectedUser.name}</h3>
+                <div className="profile-interests">
+                  <h4>Interests</h4>
+                  <div className="interests">
+                    {selectedUser.interests.map((interest, index) => (
+                      <span key={index} className="interest-tag">{interest}</span>
+                    ))}
+                  </div>
+                </div>
+                {user && user.uid !== selectedUser.id && (
+                  <div className="profile-actions">
+                    <button 
+                      className={`connect-button ${isConnected(selectedUser.id) ? 'connected' : ''}`}
+                      onClick={() => !isConnected(selectedUser.id) && handleConnect(selectedUser)}
+                      disabled={isConnected(selectedUser.id)}
+                    >
+                      {isConnected(selectedUser.id) ? 'Connected' : 'Connect'}
+                    </button>
+                    
+                    <Link to={`/community?tab=chat&user=${selectedUser.name}`} className="chat-link">
+                      <button 
+                        className="chat-button"
+                        onClick={() => {
+                          if (!isConnected(selectedUser.id)) {
+                            handleConnect(selectedUser);
+                          }
+                        }}
+                      >
+                        Chat Now
+                      </button>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <div className="empty-profile">
+              <h2>User Profile</h2>
+              <p>Select a user to view their profile</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Map; 
+
+
+-------------
+Profile.jsx -
+---------------
+import React from 'react';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+
+function Profile() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  if (!user) {
+    navigate('/login');
+    return null;
+  }
+
+  return (
+    <div className="profile-container">
+      <h2>User Profile</h2>
+      <div className="profile-card">
+        <img
+          src={user.avatar}
+          alt={user.name}
+          className="profile-avatar"
+          onError={(e) => {
+            e.target.src = `https://ui-avatars.com/api/?name=${user.name}&background=random`;
+          }}
+        />
+        <div className="profile-details">
+          <p><strong>Name:</strong> {user.name}</p>
+          <p><strong>Email:</strong> {user.email}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Profile;
+
+-----------------
+Stories.jsx -
+-----------------
+import React, { useState, useEffect } from 'react';
+import { FaSearch, FaFilter } from 'react-icons/fa';
+import axios from 'axios';
+import '../styles/Stories.css';
+
+function Stories() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [videos, setVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const categories = ['all', 'Environment', 'Education', 'Health', 'Technology', 'Community'];
+
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // const API_KEY = 'YOUR_API_KEY'; // API Key 1,brave
+        
+        // Fetch videos for each category
+        const categoryQueries = {
+          Environment: 'environmental sustainability impact stories',
+          Education: 'education impact stories innovation',
+          Health: 'healthcare innovation impact stories',
+          Technology: 'technology social impact innovation',
+          Community: 'community development impact stories'
+        };
+
+        const allVideos = [];
+        
+        // Fetch videos for each category in parallel
+        await Promise.all(
+          Object.entries(categoryQueries).map(async ([category, query]) => {
+            const response = await axios.get(
+              'https://www.googleapis.com/youtube/v3/search',
+              {
+                params: {
+                  part: 'snippet',
+                  q: query,
+                  type: 'video',
+                  maxResults: 6, // Reduced per category to avoid quota limits
+                  key: API_KEY,
+                  relevanceLanguage: 'en',
+                  videoEmbeddable: true
+                },
+                headers: {
+                  'Accept': 'application/json'
+                }
+              }
+            );
+
+            if (response.data.items) {
+              // Add category to each video object
+              const videosWithCategory = response.data.items.map(video => ({
+                ...video,
+                category: category
+              }));
+              allVideos.push(...videosWithCategory);
+            }
+          })
+        );
+
+        if (allVideos.length > 0) {
+          setVideos(allVideos);
+        } else {
+          setError('No videos found');
+        }
+      } catch (err) {
+        console.error('Error details:', err.response?.data || err.message);
+        if (err.response?.status === 403) {
+          setError('API key is invalid or has insufficient permissions. Please check your API key settings.');
+        } else if (err.response?.status === 400) {
+          setError('Invalid request. Please check your API parameters.');
+        } else {
+          setError('Failed to fetch videos. Please try again later.');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVideos();
+  }, []);
+
+  // Filter videos based on search term and category
+  const filteredVideos = videos.filter(video => {
+    if (!video.snippet?.title || !video.snippet?.description) return false;
+    
+    const searchTermLower = searchTerm.toLowerCase().trim();
+    const titleLower = video.snippet.title.toLowerCase();
+    const descriptionLower = video.snippet.description.toLowerCase();
+    
+    // Category filtering
+    if (selectedCategory !== 'all' && video.category !== selectedCategory) {
+      return false;
+    }
+    
+    // Search term filtering
+    if (searchTermLower) {
+      return titleLower.includes(searchTermLower) || 
+             descriptionLower.includes(searchTermLower);
+    }
+    
+    return true;
+  });
+
+  if (loading) {
+    return (
+      <div className="stories-page">
+        <div className="loading">Loading videos...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="stories-page">
+        <div className="error">{error}</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="stories-page">
+      {/* <div className="stories-header">
+        <h1>Impact Stories</h1>
+        <p>Discover inspiring stories of change and impact from around the world</p>
+      </div> */}
+
+      <div className="stories-controls">
+        <div className="search-bar">
+          <FaSearch className="search-icon" />
+          <input
+            type="text"
+            placeholder="Search stories..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
+        <div className="category-filter">
+          <FaFilter className="filter-icon" />
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+          >
+            {categories.map(category => (
+              <option key={category} value={category}>
+                {category.charAt(0).toUpperCase() + category.slice(1)}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div className="stories-grid">
+        {filteredVideos.length > 0 ? (
+          filteredVideos.map(video => (
+            <div 
+              key={video.id.videoId} 
+              className="story-card"
+              onClick={() => window.open(`https://www.youtube.com/watch?v=${video.id.videoId}`, '_blank')}
+            >
+              <div className="story-image">
+                <img src={video.snippet.thumbnails.high.url} alt={video.snippet.title} />
+                <div className="duration">10:30</div> {/* This would be dynamic in a real implementation */}
+              </div>
+              <div className="story-content">
+                <h3>{video.snippet.title}</h3>
+                <div className="story-meta">
+                  <span className="story-author">{video.snippet.channelTitle}</span>
+                  <span className="story-date">
+                    {new Date(video.snippet.publishedAt).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="no-results">
+            <p>No videos found matching your search criteria.</p>
+          </div>
+        )}
+      </div>
+
+      <div className="stories-footer">
+        <button className="btn btn-secondary">Load More Videos</button>
+      </div>
+    </div>
+  );
+}
+
+export default Stories; 

@@ -12,7 +12,7 @@ const Discussion = ({ onClose, initialRoom }) => {
 
   useEffect(() => {
     // Connect to Socket.io server
-    socketRef.current = io('http://localhost:3001', {
+    socketRef.current = io(import.meta.env.VITE_API_URL ? `http://localhost:${import.meta.env.VITE_API_URL}` : 'http://localhost:3001', {
       query: { room: initialRoom }
     });
 
@@ -45,53 +45,41 @@ const Discussion = ({ onClose, initialRoom }) => {
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         room: initialRoom
       };
-
       socketRef.current.emit('message', messageData);
-      setMessages(prevMessages => [...prevMessages, messageData]);
       setNewMessage('');
     }
   };
 
   return (
-    <div className="discussion-overlay">
-      <div className="discussion-container">
-        <div className="discussion-header">
-          <h2>{initialRoom} Discussion</h2>
-          <button className="btn-close" onClick={onClose}>&times;</button>
-        </div>
-        
-        <div className="messages-container">
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`message ${message.sender === user?.name ? 'message-sent' : ''}`}
-            >
-              <div className="message-avatar">{message.avatar}</div>
-              <div className="message-content">
-                <div className="message-info">
-                  <span className="message-sender">{message.sender}</span>
-                  <span className="message-time">{message.timestamp}</span>
-                </div>
-                <p className="message-text">{message.content}</p>
-              </div>
-            </div>
-          ))}
-          <div ref={messagesEndRef} />
-        </div>
-
-        <form className="message-form" onSubmit={handleSendMessage}>
-          <input
-            type="text"
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Type your message..."
-            className="message-input"
-          />
-          <button type="submit" className="send-button">
-            Send
-          </button>
-        </form>
+    <div className="discussion-modal">
+      <div className="discussion-header">
+        <h2>Discussion: {initialRoom}</h2>
+        <button onClick={onClose} className="close-button">×</button>
       </div>
+      <div className="messages-container">
+        {messages.map((message) => (
+          <div key={message.id} className="message">
+            <div className="message-avatar">{message.avatar}</div>
+            <div className="message-content">
+              <div className="message-header">
+                <span className="message-sender">{message.sender}</span>
+                <span className="message-time">{message.timestamp}</span>
+              </div>
+              <p className="message-text">{message.content}</p>
+            </div>
+          </div>
+        ))}
+        <div ref={messagesEndRef} />
+      </div>
+      <form onSubmit={handleSendMessage} className="message-input">
+        <input
+          type="text"
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
+          placeholder="Type your message..."
+        />
+        <button type="submit">Send</button>
+      </form>
     </div>
   );
 };

@@ -1,0 +1,330 @@
+.ted-talks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  margin: 24px 0;
+}
+
+.daily-update {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  margin-top: 48px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.daily-update h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #0f0f0f;
+  margin-bottom: 12px;
+}
+
+.daily-update p {
+  color: #606060;
+  margin-bottom: 24px;
+}
+
+.update-timestamp {
+  color: #606060;
+  font-size: 14px;
+  margin-top: 24px;
+  text-align: right;
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 24px;
+  color: #606060;
+}
+
+.error {
+  color: #dc2626;
+}
+
+@media (max-width: 768px) {
+  .ted-talks-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .daily-update {
+    padding: 24px;
+    margin-top: 32px;
+  }
+} 
+
+
+
+.content-library-page {
+  padding: 2rem;
+}
+
+.content-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.content-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+}
+
+.content-header p {
+  color: var(--text-light);
+  max-width: 600px;
+  margin: 0 ;
+  justify-content: center;
+}
+
+.content-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.content-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.content-tabs .tab {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text-light);
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+}
+
+.content-tabs .tab:hover {
+  color: var(--primary-color);
+  background-color: rgba(79, 70, 229, 0.1);
+}
+
+.content-tabs .tab.active {
+  color: var(--primary-color);
+  background-color: rgba(79, 70, 229, 0.1);
+}
+
+.content-grid {
+  display: grid;
+  /* grid-template-columns: repeat(auto-fill, minmax(300px, 2fr)); */
+  grid-template-columns: repeat(3, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+  justify-content: center;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ted-talks-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 equal-width columns */
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.content-card {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.content-card:hover {
+  transform: translateY(-4px) translateZ(0);
+  box-shadow: var(--shadow-md);
+}
+
+.content-thumbnail {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+  background: var(--light-bg);
+  border-radius: 8px 8px 0 0;
+}
+
+.content-thumbnail img {
+  display: block;
+  width: 50%;
+  height: 50%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.3s ease;
+  background-color: var(--light-bg);
+  will-change: transform;
+}
+
+/* Specific styles for book thumbnails */
+/* .books .content-thumbnail {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 180px;
+  padding: 10px;
+} */
+
+.books .content-thumbnail img {
+  display: block;
+  margin: 0 auto;
+  max-height: 140%;
+  width: 44%;
+  /* object-fit: contain; */
+  object-fit: cover;
+  object-position: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.content-card:hover .content-thumbnail img {
+  transform: scale(1.05) translateZ(0);
+}
+
+.search-bar1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--white);
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+  flex: 1;
+  width: 100%;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.search-bar1 input {
+  border: none;
+  outline: none;
+  margin-left: 0.5rem;
+  width: 100%;
+  font-size: 1rem;
+}
+
+/* Loading state */
+.content-thumbnail::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--light-bg) 0%, var(--white) 50%, var(--light-bg) 100%);
+  background-size: 200% 100%;
+  animation: loading-pulse 1.5s infinite;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.content-thumbnail.loading::before {
+  opacity: 1;
+}
+
+@keyframes loading-pulse {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.duration {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.content-info {
+  padding: 16px;
+}
+
+.content-info h3 {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: var(--text-color);
+  line-height: 1.4;
+}
+
+.content-info .speaker {
+  color: var(--text-light);
+  font-size: 0.875rem;
+  margin-bottom: 8px;
+}
+
+.content-meta {
+  display: flex;
+  gap: 12px;
+  color: var(--text-light);
+  font-size: 0.875rem;
+}
+
+.content-meta span {
+  color: var(--text-light);
+}
+
+.daily-update {
+  text-align: center;
+  background: var(--white);
+  padding: 2rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+}
+
+.daily-update h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+}
+
+.daily-update p {
+  color: var(--text-light);
+  margin-bottom: 1rem;
+}
+
+.update-timestamp {
+  color: var(--text-light);
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .content-tabs {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .content-tabs .tab {
+    justify-content: center;
+  }
+}

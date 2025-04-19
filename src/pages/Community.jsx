@@ -1,65 +1,131 @@
 import React, { useState, useEffect } from 'react';
 import { FaUsers, FaComments, FaUserPlus, FaSearch } from 'react-icons/fa';
+import { useAuth } from '../context/AuthContext';
 import Discussion from '../components/Discussion';
+import GroupChat from '../components/GroupChat';
+import { useLocation } from 'react-router-dom';
+import '../styles/Community.css';
+
+// Mock member data
+const MOCK_MEMBERS = [
+  {
+    id: 1,
+    name: "Sarah Johnson",
+    avatar: "https://ui-avatars.com/api/?name=Sarah+Johnson&background=random",
+    interests: ["Environmental Protection", "Education", "Social Justice"]
+  },
+  {
+    id: 2,
+    name: "Michael Chen",
+    avatar: "https://ui-avatars.com/api/?name=Michael+Chen&background=random",
+    interests: ["Climate Action", "Healthcare", "Technology"]
+  },
+  {
+    id: 3,
+    name: "Emma Wilson",
+    avatar: "https://ui-avatars.com/api/?name=Emma+Wilson&background=random",
+    interests: ["Animal Rights", "Poverty Alleviation", "Arts"]
+  },
+  {
+    id: 4,
+    name: "David Rodriguez",
+    avatar: "https://ui-avatars.com/api/?name=David+Rodriguez&background=random",
+    interests: ["Immigration Rights", "Food Security", "Community Building"]
+  },
+  {
+    id: 5,
+    name: "Aisha Patel",
+    avatar: "https://ui-avatars.com/api/?name=Aisha+Patel&background=random",
+    interests: ["Women's Rights", "Education", "Healthcare"]
+  }
+];
 
 const Community = () => {
-  const [activeSection, setActiveSection] = useState('discussions');
+  const { user } = useAuth();
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState('chat');
   const [showDiscussion, setShowDiscussion] = useState(false);
   const [selectedDiscussion, setSelectedDiscussion] = useState(null);
   const [members, setMembers] = useState([
     {
       id: 1,
-      name: "John Doe",
-      role: "Environmental Activist",
-      avatar: "JD",
-      discussions: 12,
-      contributions: 48
+      name: 'John Doe',
+      role: 'Developer',
+      avatar: '/images/avatar1.jpg'
     },
     {
       id: 2,
-      name: "Jane Smith",
-      role: "Education Advocate",
-      avatar: "JS",
-      discussions: 8,
-      contributions: 36
+      name: 'Jane Smith',
+      role: 'Designer',
+      avatar: '/images/avatar2.jpg'
     }
   ]);
-  const [discussions, setDiscussions] = useState([
-    {
-      id: 1,
-      title: "Climate Action Initiatives",
-      category: "environment",
-      author: "John Doe",
-      participants: 5,
-      lastActive: "2h ago"
-    },
-    {
-      id: 2,
-      title: "Education for All Campaign",
-      category: "education",
-      author: "Jane Smith",
-      participants: 8,
-      lastActive: "1h ago"
-    }
-  ]);
+  const [discussions, setDiscussions] = useState([]);
+  const [initialChatUser, setInitialChatUser] = useState(null);
+  const [error, setError] = useState(null);
 
-  // Load members and discussions from localStorage on mount
+  // Parse URL parameters
   useEffect(() => {
-    const savedMembers = localStorage.getItem('community-members');
-    const savedDiscussions = localStorage.getItem('community-discussions');
-    if (savedMembers) {
-      setMembers(JSON.parse(savedMembers));
+    const params = new URLSearchParams(location.search);
+    const tabParam = params.get('tab');
+    const userParam = params.get('user');
+    
+    if (tabParam) {
+      setActiveTab(tabParam);
     }
-    if (savedDiscussions) {
-      setDiscussions(JSON.parse(savedDiscussions));
+    
+    if (userParam) {
+      setInitialChatUser(userParam);
     }
-  }, []);
+  }, [location]);
 
-  // Save members and discussions to localStorage when updated
+  // Fetch members and discussions from backend on mount
   useEffect(() => {
-    localStorage.setItem('community-members', JSON.stringify(members));
-    localStorage.setItem('community-discussions', JSON.stringify(discussions));
-  }, [members, discussions]);
+    if (user) {
+      // Create current user data
+      const currentUser = {
+        id: 'current',
+        name: user.name,
+        avatar: user.avatar || `https://ui-avatars.com/api/?name=${user.name}&background=random`,
+        interests: ["Social Impact", "Community"]
+      };
+
+      setMembers(prevMembers => {
+        const currentUserExists = prevMembers.some(member => member.id === 'current');
+        if (currentUserExists) {
+          return prevMembers;
+        } else {
+          return [currentUser, ...prevMembers];
+        }
+      });
+    }
+
+    const fetchDiscussions = async () => {
+      try {
+        const response = await fetch('http://localhost:5050/api/community/discussions');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setDiscussions(data);
+      } catch (error) {
+        console.error('Error fetching discussions:', error);
+        setError('Failed to load discussions. Please try again.');
+      }
+    };
+    fetchDiscussions();
+  }, [user]);
+
+  useEffect(() => {
+    // Check if we should scroll to top based on navigation state
+    if (location.state?.scrollToTop) {
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'instant'
+      });
+    }
+  }, [location]);
 
   const handleStartDiscussion = () => {
     setSelectedDiscussion(null);
@@ -71,165 +137,102 @@ const Community = () => {
     setShowDiscussion(true);
   };
 
-  const handleJoinSubmit = (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const name = formData.get('fullName');
-    const interests = formData.get('interests');
-    const mainInterest = interests.split(',')[0].trim();
+  const handleJoin = async () => {
+    if (!user) {
+      alert('Please log in to join the community!');
+      return;
+    }
 
-    // Create new member
     const newMember = {
-      id: Date.now(),
-      name: name,
-      role: mainInterest || 'Community Member',
-      avatar: name.split(' ').map(n => n[0]).join('').toUpperCase(),
-      discussions: 1, // Starting with 1 discussion
-      contributions: 0
+      id: user.id || Date.now(),
+      name: user.name,
+      role: 'Community Member',
+      avatar: user.avatar || user.name.split(' ').map(n => n[0]).join('').toUpperCase(),
+      discussions: 0,
+      contributions: 0,
     };
 
-    // Create a new discussion based on their interest
-    const newDiscussion = {
-      id: Date.now() + 1,
-      title: `${mainInterest} Discussion Group`,
-      category: mainInterest.toLowerCase(),
-      author: name,
-      participants: 1,
-      lastActive: new Date().toLocaleString()
-    };
+    try {
+      const response = await fetch('/api/community/join', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newMember),
+      });
+      const updatedMembers = await response.json();
+      setMembers(updatedMembers);
+      setActiveTab('members');
+    } catch (error) {
+      console.error('Error joining community:', error);
+    }
+  };
 
-    // Add new member to the list
-    setMembers(prevMembers => [...prevMembers, newMember]);
-    
-    // Add new discussion to the list
-    setDiscussions(prevDiscussions => [...prevDiscussions, newDiscussion]);
-
-    // Clear form
-    e.target.reset();
-    
-    // Switch to discussions section to show the new discussion
-    setActiveSection('discussions');
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('en-US', options);
   };
 
   return (
     <div className="community-page">
       <div className="community-header">
-        <h1>Community Hub</h1>
-        <p>Connect, collaborate, and make an impact together</p>
+        <h1>Community</h1>
+        <p>Connect and chat with other members</p>
       </div>
 
-      <div className="community-nav">
+      <div className="community-tabs">
         <button
-          className={`nav-btn ${activeSection === 'discussions' ? 'active' : ''}`}
-          onClick={() => setActiveSection('discussions')}
+          className={`tab-button ${activeTab === 'chat' ? 'active' : ''}`}
+          onClick={() => setActiveTab('chat')}
         >
-          <FaComments /> Discussions
+          <FaComments /> Chat
         </button>
         <button
-          className={`nav-btn ${activeSection === 'members' ? 'active' : ''}`}
-          onClick={() => setActiveSection('members')}
+          className={`tab-button ${activeTab === 'members' ? 'active' : ''}`}
+          onClick={() => setActiveTab('members')}
         >
           <FaUsers /> Members
         </button>
-        <button
-          className={`nav-btn ${activeSection === 'join' ? 'active' : ''}`}
-          onClick={() => setActiveSection('join')}
-        >
-          <FaUserPlus /> Join Us
-        </button>
-        <button
-          className="btn btn-primary"
-          onClick={handleStartDiscussion}
-        >
-          Start Discussion
-        </button>
       </div>
 
-      {(activeSection === 'discussions' || activeSection === 'members') && (
-        <div className="search-section">
-          <div className="search-bar">
-            <FaSearch />
-            <input
-              type="text"
-              placeholder={`Search ${activeSection}...`}
-            />
-          </div>
-        </div>
-      )}
-
-      {activeSection === 'discussions' && (
-        <div className="discussions-list">
-          {discussions.map(discussion => (
-            <div 
-              key={discussion.id} 
-              className="discussion-card" 
-              onClick={() => handleDiscussionClick(discussion)}
-            >
-              <div className="discussion-main">
-                <div className="discussion-info">
-                  <h3>{discussion.title}</h3>
-                  <div className="discussion-meta">
-                    <span>Started by {discussion.author}</span>
-                    <span>•</span>
-                    <span>{discussion.participants} participants</span>
-                    <span>•</span>
-                    <span>Last active {discussion.lastActive}</span>
+      <div className="community-content">
+        {activeTab === 'chat' ? (
+          <GroupChat initialUser={initialChatUser} />
+        ) : (
+          <div className="members-list">
+            <h2>Community Members</h2>
+            <div className="members-grid">
+              {members.map((member) => (
+                <div key={member.id} className="member-card">
+                  <div className="member-header">
+                    <img 
+                      src={member.avatar} 
+                      alt={member.name} 
+                      className="member-avatar"
+                      onError={(e) => {
+                        e.target.src = `https://ui-avatars.com/api/?name=${member.name}&background=random`;
+                      }}
+                    />
+                    {member.id === 'current' && (
+                      <span className="current-user-badge">You</span>
+                    )}
+                  </div>
+                  <div className="member-info">
+                    <h3>{member.name}</h3>
+                    {member.interests && member.interests.length > 0 && (
+                      <div className="member-interests">
+                        {member.interests.map((interest, index) => (
+                          <span key={index} className="interest-tag">
+                            {interest}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
-                <span className="category">{discussion.category}</span>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
-      )}
-
-      {activeSection === 'members' && (
-        <div className="members-list">
-          {members.map(member => (
-            <div key={member.id} className="member-card">
-              <div className="member-avatar">{member.avatar}</div>
-              <div className="member-info">
-                <h3>{member.name}</h3>
-                <span className="role">{member.role}</span>
-                <div className="member-stats">
-                  <span>{member.discussions} discussions</span>
-                  <span>•</span>
-                  <span>{member.contributions} contributions</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {activeSection === 'join' && (
-        <div className="join-section">
-          <div className="join-content">
-            <h2>Join Our Community</h2>
-            <p>Be part of a growing network of changemakers</p>
-            <form className="join-form" onSubmit={handleJoinSubmit}>
-              <input 
-                type="text" 
-                name="fullName" 
-                placeholder="Full Name" 
-                required 
-              />
-              <input 
-                type="email" 
-                name="email" 
-                placeholder="Email Address" 
-                required 
-              />
-              <textarea 
-                name="interests" 
-                placeholder="Tell us about yourself and your interests (e.g., Health, Technology, Education)"
-                required
-              ></textarea>
-              <button type="submit" className="btn btn-primary">Join Now</button>
-            </form>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {showDiscussion && (
         <Discussion 
@@ -241,4 +244,4 @@ const Community = () => {
   );
 };
 
-export default Community; 
+export default Community;

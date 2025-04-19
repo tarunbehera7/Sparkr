@@ -1,0 +1,290 @@
+.stories-page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 24px;
+  min-height: calc(100vh - 64px); /* Account for navbar */
+}
+
+.stories-header {
+  text-align: center;
+  margin-bottom: 32px;
+  padding: 32px 0;
+}
+
+.stories-header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #0f0f0f;
+  margin-bottom: 12px;
+}
+
+.stories-header p {
+  font-size: 16px;
+  color: #606060;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.stories-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+  padding: 0 16px;
+  justify-content: flex-start;
+}
+
+.search-bar {
+  flex: 0 1 500px;
+  display: flex;
+  align-items: center;
+  background: #f8f8f8;
+  border: 1px solid #e0e0e0;
+  border-radius: 24px;
+  padding: 8px 16px;
+  transition: all 0.2s;
+  margin-right: auto;
+}
+
+.search-bar:focus-within {
+  background: white;
+  border-color: #1a73e8;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.search-icon {
+  color: #606060;
+  margin-right: 12px;
+  font-size: 18px;
+}
+
+.search-bar input {
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  width: 100%;
+  padding: 4px 0;
+  outline: none;
+  color: #0f0f0f;
+}
+
+.search-bar input::placeholder {
+  color: #606060;
+}
+
+.category-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-icon {
+  color: #606060;
+  font-size: 18px;
+}
+
+.category-filter select {
+  padding: 8px 32px 8px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  font-size: 14px;
+  color: var(--text-color);
+  background: var(--white);
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+}
+
+.category-filter select:hover {
+  border-color: #c0c0c0;
+}
+
+.stories-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  padding: 0 16px;
+  margin-bottom: 48px;
+}
+
+.story-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  height: 320px;
+  display: flex;
+  flex-direction: column;
+}
+
+.story-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.story-image {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  flex: 0 0 180px;
+  background: #f0f0f0;
+  overflow: hidden;
+}
+
+.story-image img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.story-card:hover .story-image img {
+  transform: scale(1.05);
+}
+
+.duration {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.story-content {
+  padding: 12px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 140px;
+  max-height: 140px;
+  overflow: hidden;
+}
+
+.story-content h3 {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 22px;
+  margin: 0;
+  color: #0f0f0f;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  max-height: 44px;
+}
+
+.story-meta {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.story-author {
+  font-size: 14px;
+  color: #606060;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.story-date {
+  font-size: 13px;
+  color: #606060;
+}
+
+.btn-primary {
+  display: none; /* Hide the watch button as it's not needed in YouTube-style cards */
+}
+
+.btn-secondary {
+  background: #f8f8f8;
+  color: #0f0f0f;
+  border: 1px solid #e0e0e0;
+  padding: 8px 24px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  background: #f0f0f0;
+  border-color: #c0c0c0;
+}
+
+.stories-footer {
+  text-align: center;
+  padding: 32px 0;
+}
+
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 48px 0;
+  color: #606060;
+  font-size: 16px;
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 48px 0;
+  color: #606060;
+  font-size: 16px;
+}
+
+@media (max-width: 1200px) {
+  .stories-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .stories-page {
+    padding: 16px;
+  }
+
+  .stories-header {
+    padding: 24px 0;
+  }
+
+  .stories-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 0;
+  }
+
+  .search-bar {
+    max-width: none;
+  }
+
+  .stories-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 0;
+  }
+
+  .story-card {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+} 

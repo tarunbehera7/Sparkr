@@ -1,0 +1,1 @@
+{"rules":{"chats":{"$roomId":{"messages":{".indexOn":["timestamp"]}}}}}

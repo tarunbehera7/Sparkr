@@ -1,60 +1,137 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaSearch, FaFilter } from 'react-icons/fa';
+import axios from 'axios';
+import '../styles/Stories.css';
 
 function Stories() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [videos, setVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Mock data for stories with placeholder images
-  const stories = [
-    {
-      id: 1,
-      title: "Community Garden Initiative",
-      category: "Environment",
-      author: "Sarah Johnson",
-      date: "2024-03-15",
-      excerpt: "How a small community transformed an abandoned lot into a thriving garden...",
-      image: "https://images.pexels.com/photos/2255935/pexels-photo-2255935.jpeg"
-    },
-    {
-      id: 2,
-      title: "Education for All",
-      category: "Education",
-      author: "Michael Chen",
-      date: "2024-03-14",
-      excerpt: "Breaking barriers to education in remote communities...",
-      image: "https://images.pexels.com/photos/256431/pexels-photo-256431.jpeg"
-    },
-    {
-      id: 3,
-      title: "Clean Water Project",
-      category: "Health",
-      author: "Lisa Rodriguez",
-      date: "2024-03-13",
-      excerpt: "Bringing clean water access to rural villages...",
-      image: "https://images.pexels.com/photos/6646917/pexels-photo-6646917.jpeg"
+  const categories = ['all', 'Environment', 'Education', 'Health', 'Technology', 'Community'];
+
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // "API key 1" from google cloud( brave )..
+        // const API_KEY = 'AIzaSyBYvgGAyXfL961GHsVdTHGqvev9-lQepTU'; // API Key 1,brave
+        // const API_KEY = 'AIzaSyCYu9RKDfKUOMarLP_qVvuqRmEEnn43Flg'; // API Key 1 firefox
+        // const API_KEY = 'AIzaSyBn5sgW_2Rc01UcHjzYYUAmNJO60gy_GUY'; // API Key 1, edge
+
+        // Fetch videos for each category
+        const categoryQueries = {
+          Environment: 'environmental sustainability impact stories',
+          Education: 'education impact stories innovation',
+          Health: 'healthcare innovation impact stories',
+          Technology: 'technology social impact innovation',
+          Community: 'community development impact stories'
+        };
+
+        const allVideos = [];
+        
+        // Fetch videos for each category in parallel
+        await Promise.all(
+          Object.entries(categoryQueries).map(async ([category, query]) => {
+            const response = await axios.get(
+              'https://www.googleapis.com/youtube/v3/search',
+              {
+                params: {
+                  part: 'snippet',
+                  q: query,
+                  type: 'video',
+                  maxResults: 6, // Reduced per category to avoid quota limits
+                  key: API_KEY,
+                  relevanceLanguage: 'en',
+                  videoEmbeddable: true
+                },
+                headers: {
+                  'Accept': 'application/json'
+                }
+              }
+            );
+
+            if (response.data.items) {
+              // Add category to each video object
+              const videosWithCategory = response.data.items.map(video => ({
+                ...video,
+                category: category
+              }));
+              allVideos.push(...videosWithCategory);
+            }
+          })
+        );
+
+        if (allVideos.length > 0) {
+          setVideos(allVideos);
+        } else {
+          setError('No videos found');
+        }
+      } catch (err) {
+        console.error('Error details:', err.response?.data || err.message);
+        if (err.response?.status === 403) {
+          setError('API key is invalid or has insufficient permissions. Please check your API key settings.');
+        } else if (err.response?.status === 400) {
+          setError('Invalid request. Please check your API parameters.');
+        } else {
+          setError('Failed to fetch videos. Please try again later.');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVideos();
+  }, []);
+
+  // Filter videos based on search term and category
+  const filteredVideos = videos.filter(video => {
+    if (!video.snippet?.title || !video.snippet?.description) return false;
+    
+    const searchTermLower = searchTerm.toLowerCase().trim();
+    const titleLower = video.snippet.title.toLowerCase();
+    const descriptionLower = video.snippet.description.toLowerCase();
+    
+    // Category filtering
+    if (selectedCategory !== 'all' && video.category !== selectedCategory) {
+      return false;
     }
-  ];
-
-  const categories = ['all', 'Environment', 'Education', 'Health', 'Social Justice'];
-
-  // Filter stories based on search term and selected category
-  const filteredStories = stories.filter(story => {
-    const matchesSearch = story.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         story.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         story.author.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesCategory = selectedCategory === 'all' || story.category === selectedCategory;
+    // Search term filtering
+    if (searchTermLower) {
+      return titleLower.includes(searchTermLower) || 
+             descriptionLower.includes(searchTermLower);
+    }
     
-    return matchesSearch && matchesCategory;
+    return true;
   });
+
+  if (loading) {
+    return (
+      <div className="stories-page">
+        <div className="loading">Loading videos...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="stories-page">
+        <div className="error">{error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="stories-page">
-      <div className="stories-header">
+      {/* <div className="stories-header">
         <h1>Impact Stories</h1>
         <p>Discover inspiring stories of change and impact from around the world</p>
-      </div>
+      </div> */}
 
       <div className="stories-controls">
         <div className="search-bar">
@@ -83,33 +160,37 @@ function Stories() {
       </div>
 
       <div className="stories-grid">
-        {filteredStories.length > 0 ? (
-          filteredStories.map(story => (
-            <div key={story.id} className="story-card">
+        {filteredVideos.length > 0 ? (
+          filteredVideos.map(video => (
+            <div 
+              key={video.id.videoId} 
+              className="story-card"
+              onClick={() => window.open(`https://www.youtube.com/watch?v=${video.id.videoId}`, '_blank')}
+            >
               <div className="story-image">
-                <img src={story.image} alt={story.title} />
+                <img src={video.snippet.thumbnails.high.url} alt={video.snippet.title} />
+                <div className="duration">10:30</div> {/* This would be dynamic in a real implementation */}
               </div>
               <div className="story-content">
-                <span className="story-category">{story.category}</span>
-                <h3>{story.title}</h3>
-                <p>{story.excerpt}</p>
+                <h3>{video.snippet.title}</h3>
                 <div className="story-meta">
-                  <span className="story-author">By {story.author}</span>
-                  <span className="story-date">{story.date}</span>
+                  <span className="story-author">{video.snippet.channelTitle}</span>
+                  <span className="story-date">
+                    {new Date(video.snippet.publishedAt).toLocaleDateString()}
+                  </span>
                 </div>
-                <button className="btn btn-primary">Read More</button>
               </div>
             </div>
           ))
         ) : (
           <div className="no-results">
-            <p>No stories found matching your search criteria.</p>
+            <p>No videos found matching your search criteria.</p>
           </div>
         )}
       </div>
 
       <div className="stories-footer">
-        <button className="btn btn-secondary">Load More Stories</button>
+        <button className="btn btn-secondary">Load More Videos</button>
       </div>
     </div>
   );
