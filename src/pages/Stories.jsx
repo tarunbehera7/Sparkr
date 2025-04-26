@@ -21,7 +21,7 @@ function Stories() {
         // "API key 1" from google cloud( brave )..
         // const API_KEY = 'AIzaSyBYvgGAyXfL961GHsVdTHGqvev9-lQepTU'; // API Key 1,brave
         // const API_KEY = 'AIzaSyCYu9RKDfKUOMarLP_qVvuqRmEEnn43Flg'; // API Key 1 firefox
-        // const API_KEY = 'AIzaSyBn5sgW_2Rc01UcHjzYYUAmNJO60gy_GUY'; // API Key 1, edge
+        const API_KEY = 'AIzaSyBn5sgW_2Rc01UcHjzYYUAmNJO60gy_GUY'; // API Key 1, edge
 
         // Fetch videos for each category
         const categoryQueries = {
