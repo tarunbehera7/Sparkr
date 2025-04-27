@@ -157,26 +157,35 @@ const GroupChat = ({ initialUser }) => {
         console.log('Raw connections data:', data);
         
         if (data) {
-          // Convert connections object to array
-          const connectionsList = Object.entries(data)
-            .map(([userId, connection]) => ({
-              userId,
-              name: connection.name,
-              avatar: connection.avatar,
-              roomId: connection.roomId,
-              timestamp: connection.timestamp,
-              isExplicitlyConnected: connection.isExplicitlyConnected || false
-            }))
-            .filter(connection => connection.isExplicitlyConnected); // Only include explicit connections
-
-          // Sort by most recent connection
-          connectionsList.sort((a, b) => {
-            // Handle cases where timestamp might be null or undefined
-            const timestampA = a.timestamp || 0;
-            const timestampB = b.timestamp || 0;
-            return timestampB - timestampA;
-          });
+          // Create a map to store unique connections by name
+          const uniqueConnections = new Map();
           
+          Object.entries(data).forEach(([key, value]) => {
+            // Only include explicitly created connections with proper room ID format
+            if (value && 
+                value.name && 
+                value.userId && 
+                value.timestamp && 
+                value.roomId &&
+                value.isExplicitlyConnected === true &&
+                value.roomId.includes('private_')) { // Ensure it's a private chat
+              const connectionKey = value.name.toLowerCase();
+              const existingConnection = uniqueConnections.get(connectionKey);
+              
+              // Only keep the most recent connection for each unique name
+              if (!existingConnection || value.timestamp > existingConnection.timestamp) {
+                uniqueConnections.set(connectionKey, {
+                  ...value,
+                  roomId: `private_${[user.uid, value.userId].sort().join('_')}` // Consistent room ID format
+                });
+              }
+            }
+          });
+
+          // Convert map to array and sort by most recent
+          const connectionsList = Array.from(uniqueConnections.values())
+            .sort((a, b) => b.timestamp - a.timestamp);
+
           console.log('Processed connections list:', connectionsList);
           setUserConnections(connectionsList);
         } else {
@@ -218,9 +227,10 @@ const GroupChat = ({ initialUser }) => {
       const messageData = {
         content: newMessage.trim(),
         sender: user.displayName || user.name || 'Anonymous',
-        senderEmail: user.email,
+        senderEmail: user.email || user.uid, // Use UID as fallback if email not available
+        senderId: user.uid, // Add user ID for consistent identification
         avatar: user.photoURL || user.avatar || `https://ui-avatars.com/api/?name=${user.displayName || user.name || 'Anonymous'}&background=random`,
-        timestamp: Date.now()
+        timestamp: serverTimestamp() // Use server timestamp for consistent ordering
       };
 
       try {
@@ -232,7 +242,6 @@ const GroupChat = ({ initialUser }) => {
         
         await push(roomMessagesRef, messageData);
         setNewMessage('');
-        // scrollToBottom();
       } catch (error) {
         console.error('Error sending message:', error);
         alert('Failed to send message. Please try again.');
@@ -285,10 +294,12 @@ const GroupChat = ({ initialUser }) => {
       try {
         const messagesData = snapshot.val();
         if (messagesData) {
-          const messagesList = Object.entries(messagesData).map(([key, value]) => ({
-            id: key,
-            ...value
-          }));
+          const messagesList = Object.entries(messagesData)
+            .filter(([key]) => key !== 'initialized' && key !== 'participants' && key !== 'createdAt')
+            .map(([key, value]) => ({
+              id: key,
+              ...value
+            }));
           // Only combine with preloaded messages for group chats
           const allMessages = isPrivate 
             ? messagesList 
@@ -501,7 +512,7 @@ const GroupChat = ({ initialUser }) => {
             messages.map((message, index) => (
               <div
                 key={message.id || `msg-${index}`}
-                className={`message ${message.senderEmail === user?.email ? 'own-message' : ''}`}
+                className={`message ${(message.senderId === user?.uid || message.senderEmail === user?.email) ? 'own-message' : ''}`}
               >
                 <img 
                   src={message.avatar} 

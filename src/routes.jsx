@@ -8,6 +8,8 @@ import ContentLibrary from './pages/ContentLibrary';
 import LoginPage from './pages/LoginPage';
 import Map from './pages/Map';
 import GroupChat from './components/GroupChat';
+import ActionHub from './pages/ActionHub';
+import PassionDiscovery from './pages/PassionDiscovery';
 
 const AppRoutes = () => {
   return (
@@ -19,6 +21,8 @@ const AppRoutes = () => {
       <Route path="/content" element={<ContentLibrary />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/map" element={<Map />} />
+      <Route path="/hub" element={<ActionHub />} />
+      <Route path="/discover" element={<PassionDiscovery />} />
     </Routes>
   );
 };

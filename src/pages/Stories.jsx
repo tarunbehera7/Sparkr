@@ -18,11 +18,8 @@ function Stories() {
         setLoading(true);
         setError(null);
         
-        // "API key 1" from google cloud( brave )..
-        // const API_KEY = 'AIzaSyBYvgGAyXfL961GHsVdTHGqvev9-lQepTU'; // API Key 1,brave
-        // const API_KEY = 'AIzaSyCYu9RKDfKUOMarLP_qVvuqRmEEnn43Flg'; // API Key 1 firefox
-        const API_KEY = 'AIzaSyBn5sgW_2Rc01UcHjzYYUAmNJO60gy_GUY'; // API Key 1, edge
-
+        
+      
         // Fetch videos for each category
         const categoryQueries = {
           Environment: 'environmental sustainability impact stories',
@@ -45,7 +42,8 @@ function Stories() {
                   q: query,
                   type: 'video',
                   maxResults: 6, // Reduced per category to avoid quota limits
-                  key: API_KEY,
+                  // key: API_KEY,
+                  key : process.env.REACT_APP_API_KEY,
                   relevanceLanguage: 'en',
                   videoEmbeddable: true
                 },

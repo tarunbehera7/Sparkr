@@ -17,7 +17,7 @@ const YouTubeVideoCard = ({ videoId }) => {
               part: 'snippet,statistics',
               id: videoId,
               // "API key 1" from google cloud( Google )..
-              key: 'AIzaSyCBVXC3hPxpa3IhjAFUyNwuHB8RZyN43aQ' // Replace with your actual API key 1, Google
+              key: import.meta.env.VITE_YOUTUBE_API_KEY
             }
           }
         );
