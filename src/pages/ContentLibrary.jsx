@@ -167,8 +167,8 @@ const ContentLibrary = () => {
   const fetchTEDTalks = async () => {
     try {
       setLoading(true);
-      // "API key 2" from google cloud( brave )..
-      // const API_KEY = 'AIzaSyAKpEvM8VHzqZFPq0JjZ7PKWtMVL-72u6Y'; // Replace with your new API key 2 ,brave
+
+     
       
       const response = await axios.get(
         'https://www.googleapis.com/youtube/v3/search',
@@ -179,7 +179,7 @@ const ContentLibrary = () => {
             type: 'video',
             order: 'date', // Get most recent videos
             maxResults: 5,
-            key: API_KEY
+            key: process.env.REACT_APP_OTHER_API_KEY
           }
         }
       );
