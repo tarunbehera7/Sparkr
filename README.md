@@ -2,6 +2,9 @@
 
 An open-source platform dedicated to creating social impact through storytelling, community action, and collective change.
 
+
+![Image](https://github.com/user-attachments/assets/af212e4a-ed00-4a10-bf03-c699c54deb2e)
+
 ## Features
 
 - 🎯 Focus on social impact and community action
