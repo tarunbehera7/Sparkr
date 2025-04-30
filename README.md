@@ -81,4 +81,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Twitter: [@StorySpark](https://twitter.com/StorySpark)
 - GitHub: [StorySpark](https://github.com/StorySpark) 
 
-![Image](https://github.com/user-attachments/assets/8a800ee9-1263-44e7-b7db-644634c0000b)
