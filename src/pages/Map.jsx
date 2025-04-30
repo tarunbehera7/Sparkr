@@ -7,6 +7,7 @@ import L from 'leaflet';
 import { ref, push, set, get, onValue, serverTimestamp } from 'firebase/database';
 import { database } from '../config/firebase';
 import mockUsers from '../data/mockUsers';
+import { FaPlus, FaMapMarkerAlt, FaUser } from 'react-icons/fa';
 
 // Fix for default marker icons in Leaflet with React
 delete L.Icon.Default.prototype._getIconUrl;
@@ -20,6 +21,16 @@ L.Icon.Default.mergeOptions({
 const defaultIcon = new L.Icon.Default();
 const selectedIcon = new L.Icon({
   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+
+// Add initiative icon
+const initiativeIcon = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
@@ -46,13 +57,41 @@ function MapController({ selectedUser }) {
   return null;
 }
 
+function MapEvents({ onMapClick }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (!map) return;
+    
+    map.on('click', (e) => {
+      onMapClick(e);
+    });
+    
+    return () => {
+      map.off('click');
+    };
+  }, [map, onMapClick]);
+
+  return null;
+}
+
 function Map() {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [connections, setConnections] = useState({});
+  const [initiatives, setInitiatives] = useState([]);
+  const [showInitiativeModal, setShowInitiativeModal] = useState(false);
+  const [newInitiative, setNewInitiative] = useState({
+    title: '',
+    description: '',
+    category: '',
+    location: null
+  });
   const { user } = useAuth();
   const navigate = useNavigate();
+  const mapRef = React.useRef(null);
+  const [activeTab, setActiveTab] = useState('initiatives');
 
   // Add a function to clear connections for a new user
   const clearExistingConnections = async () => {
@@ -67,7 +106,8 @@ function Map() {
         await set(connectionsRef, null);
         setConnections({});
       }
-    } catch (error) {
+    } 
+    catch (error) {
       console.error('Error clearing connections:', error);
     }
   };
@@ -135,6 +175,21 @@ function Map() {
       setConnections({});
     }
   }, [user]);
+
+  // Load initiatives
+  useEffect(() => {
+    const initiativesRef = ref(database, 'initiatives');
+    return onValue(initiativesRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const initiativesList = Object.entries(data).map(([id, initiative]) => ({
+          id,
+          ...initiative
+        }));
+        setInitiatives(initiativesList);
+      }
+    });
+  }, []);
 
   const handleUserClick = (selectedUser) => {
     setSelectedUser(selectedUser);
@@ -278,6 +333,70 @@ function Map() {
     return connected;
   };
 
+  const handleMapClick = (e) => {
+    if (showInitiativeModal) {
+      setNewInitiative(prev => ({
+        ...prev,
+        location: {
+          lat: e.latlng.lat,
+          lng: e.latlng.lng
+        }
+      }));
+    }
+  };
+
+  const handleCreateInitiative = async (e) => {
+    e.preventDefault();
+    
+    // Check for user authentication
+    if (!user || !user.email) {
+      alert('Please sign in to create an initiative');
+      return;
+    }
+
+    // Validate all required fields
+    if (!newInitiative.title || !newInitiative.category || !newInitiative.location) {
+      alert('Please fill in all required fields and select a location on the map');
+      return;
+    }
+
+    try {
+      const initiativeRef = ref(database, 'initiatives');
+      const newInitiativeRef = push(initiativeRef);
+      
+      // Create initiative data with fallback values
+      const initiativeData = {
+        title: newInitiative.title.trim(),
+        category: newInitiative.category,
+        location: {
+          lat: Number(newInitiative.location.lat),
+          lng: Number(newInitiative.location.lng)
+        },
+        creatorId: user.email,
+        creatorName: user.name || user.email.split('@')[0] || 'Anonymous',
+        createdAt: Date.now()
+      };
+
+      // Validate all values are defined before saving
+      if (Object.values(initiativeData).some(value => value === undefined)) {
+        throw new Error('Some required fields are missing');
+      }
+
+      await set(newInitiativeRef, initiativeData);
+      
+      // Reset form only after successful creation
+      setShowInitiativeModal(false);
+      setNewInitiative({
+        title: '',
+        category: '',
+        location: null
+      });
+    } catch (error) {
+      console.error('Error creating initiative:', error);
+      alert(`Failed to create initiative: ${error.message}`);
+    }
+  };
+
   return (
     <div className="map-page">
       <div className="map-header">
@@ -287,66 +406,111 @@ function Map() {
 
       <div className="map-container">
         <div className="map-sidebar">
-          <h2>People Near You</h2>
-          {loading ? (
-            <div className="loading">Loading map data...</div>
-          ) : (
-            <div className="users-list">
-              {users.map((mapUser) => (
-                <div 
-                  key={mapUser.id} 
-                  className={`user-card ${selectedUser?.id === mapUser.id ? 'selected' : ''}`}
-                  onClick={() => handleUserClick(mapUser)}
-                >
-                  <div className="user-avatar">
-                    {mapUser.name.charAt(0)}
-                  </div>
-                  <div className="user-info">
-                    <h3>{mapUser.name}</h3>
-                    <div className="interests">
-                      {mapUser.interests.map((interest, index) => (
-                        <span key={index} className="interest-tag">{interest}</span>
-                      ))}
-                    </div>
-                    <div className="button-group">
-                      {user ? (
-                        user.uid !== mapUser.id ? (
-                          <>
-                            <button
-                              className={`connect-button ${isConnected(mapUser.id) ? 'connected' : ''}`}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if (!isConnected(mapUser.id)) {
-                                  handleConnect(mapUser);
-                                }
-                              }}
-                              disabled={isConnected(mapUser.id)}
-                            >
-                              {isConnected(mapUser.id) ? 'Connected' : 'Connect'}
-                            </button>
-                          </>
-                        ) : (
-                          <button className="connect-button" disabled>
-                            This is you
-                          </button>
-                        )
-                      ) : (
-                        <button
-                          className="connect-button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            alert('Please sign in to connect with other users');
+          <div className="sidebar-header">
+            <div className="tab-buttons">
+              <button 
+                className={`tab-button ${activeTab === 'initiatives' ? 'active' : ''}`}
+                onClick={() => setActiveTab('initiatives')}
+              >
+                <FaMapMarkerAlt /> Initiatives
+              </button>
+              <button 
+                className={`tab-button ${activeTab === 'profile' ? 'active' : ''}`}
+                onClick={() => setActiveTab('profile')}
+              >
+                <FaUser /> Profile
+              </button>
+            </div>
+          </div>
+
+          <div className="sidebar-content">
+            {activeTab === 'initiatives' ? (
+              <>
+                <div className="sidebar-actions">
+                  <button 
+                    className="create-initiative-btn"
+                    onClick={() => setShowInitiativeModal(true)}
+                  >
+                    <FaPlus /> Create Initiative
+                  </button>
+                </div>
+
+                {loading ? (
+                  <div className="loading">Loading initiatives...</div>
+                ) : (
+                  <div className="initiatives-list">
+                    {initiatives
+                      .filter(initiative => initiative.creatorId !== user?.email)
+                      .map((initiative) => (
+                        <div 
+                          key={initiative.id} 
+                          className="initiative-card"
+                          onClick={() => {
+                            if (mapRef.current) {
+                              mapRef.current.setView(
+                                [initiative.location.lat, initiative.location.lng],
+                                13
+                              );
+                            }
                           }}
                         >
-                          Sign in to Connect
-                        </button>
-                      )}
-                    </div>
+                          <div className="initiative-info">
+                            <h3>{initiative.title}</h3>
+                            <div className="initiative-category">
+                              <span className="category-tag">{initiative.category}</span>
+                            </div>
+                            <div className="initiative-creator">
+                              Created by: {initiative.creatorName}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
+                )}
+              </>
+            ) : (
+              <div className="profile-initiatives">
+                <h3>My Initiatives</h3>
+                {user ? (
+                  <div className="my-initiatives-list">
+                    {initiatives
+                      .filter(initiative => initiative.creatorId === user.email)
+                      .map((initiative) => (
+                        <div 
+                          key={initiative.id} 
+                          className="my-initiative-card"
+                          onClick={() => {
+                            if (mapRef.current) {
+                              mapRef.current.setView(
+                                [initiative.location.lat, initiative.location.lng],
+                                13
+                              );
+                            }
+                          }}
+                        >
+                          <div className="initiative-info">
+                            <h3>{initiative.title}</h3>
+                            <div className="initiative-category">
+                              <span className="category-tag">{initiative.category}</span>
+                            </div>
+                            <div className="initiative-location">
+                              Location: {initiative.location.lat.toFixed(4)}, {initiative.location.lng.toFixed(4)}
+                            </div>
+                            <div className="initiative-created">
+                              Created: {new Date(initiative.createdAt).toLocaleDateString()}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                ) : (
+                  <div className="login-prompt">
+                    Please sign in to view your initiatives
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="map-view">
@@ -360,8 +524,10 @@ function Map() {
                 minZoom={2}
                 maxBounds={[[-90, -180], [90, 180]]}
                 style={{ height: '100%', width: '100%' }}
+                ref={mapRef}
               >
                 <MapController selectedUser={selectedUser} />
+                <MapEvents onMapClick={handleMapClick} />
                 <TileLayer
                   url="https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=5CnDOnQ0UYnkHZvEU0BY"
                   attribution='<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>'
@@ -415,75 +581,154 @@ function Map() {
                     </Popup>
                   </Marker>
                 ))}
+
+                {/* Initiative Markers */}
+                {initiatives.map((initiative) => (
+                  <Marker
+                    key={initiative.id}
+                    position={[initiative.location.lat, initiative.location.lng]}
+                    icon={initiativeIcon}
+                  >
+                    <Popup>
+                      <div className="initiative-popup">
+                        <h3>{initiative.title}</h3>
+                        <p>{initiative.description}</p>
+                        <div className="initiative-category">
+                          <span className="category-tag">{initiative.category}</span>
+                        </div>
+                        <div className="initiative-creator">
+                          Created by: {initiative.creatorName}
+                        </div>
+                      </div>
+                    </Popup>
+                  </Marker>
+                ))}
               </MapContainer>
             </div>
           )}
         </div>
 
-        <div className={`user-details ${selectedUser ? 'visible' : ''}`}>
-          {selectedUser ? (
-            <>
-              <div className="user-details-header">
-                <h2>User Profile</h2>
-                <button 
-                  className="btn-close"
-                  onClick={() => setSelectedUser(null)}
-                  style={closeButtonStyle}
+        <div className="user-details">
+          <h2>People Near You</h2>
+          {loading ? (
+            <div className="loading">Loading users...</div>
+          ) : (
+            <div className="users-list">
+              {users.map((mapUser) => (
+                <div 
+                  key={mapUser.id} 
+                  className={`user-card ${selectedUser?.id === mapUser.id ? 'selected' : ''}`}
+                  onClick={() => handleUserClick(mapUser)}
                 >
-                  ×
-                </button>
-              </div>
-              <div className="user-profile">
-                <div className="profile-avatar">
-                  {selectedUser.name.charAt(0)}
-                </div>
-                <h3>{selectedUser.name}</h3>
-                <div className="profile-interests">
-                  <h4>Interests</h4>
-                  <div className="interests">
-                    {selectedUser.interests.map((interest, index) => (
-                      <span key={index} className="interest-tag">{interest}</span>
-                    ))}
+                  <div className="user-avatar">
+                    {mapUser.name.charAt(0)}
+                  </div>
+                  <div className="user-info">
+                    <h3>{mapUser.name}</h3>
+                    <div className="interests">
+                      {mapUser.interests.map((interest, index) => (
+                        <span key={index} className="interest-tag">{interest}</span>
+                      ))}
+                    </div>
+                    <div className="button-group">
+                      {user ? (
+                        user.uid !== mapUser.id ? (
+                          <>
+                            <button 
+                              className={`connect-button ${isConnected(mapUser.id) ? 'connected' : ''}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (!isConnected(mapUser.id)) {
+                                  handleConnect(mapUser);
+                                }
+                              }}
+                              disabled={isConnected(mapUser.id)}
+                            >
+                              {isConnected(mapUser.id) ? 'Connected' : 'Connect'}
+                            </button>
+                          </>
+                        ) : (
+                          <button className="connect-button" disabled>
+                            This is you
+                          </button>
+                        )
+                      ) : (
+                        <button 
+                          className="connect-button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            alert('Please sign in to connect with other users');
+                          }}
+                        >
+                          Sign in to Connect
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
-                <div className="profile-actions">
-                  {user ? (
-                    user.uid !== selectedUser.id ? (
-                      <>
-                        <button 
-                          className={`connect-button ${isConnected(selectedUser.id) ? 'connected' : ''}`}
-                          onClick={() => !isConnected(selectedUser.id) && handleConnect(selectedUser)}
-                          disabled={isConnected(selectedUser.id)}
-                        >
-                          {isConnected(selectedUser.id) ? 'Connected' : 'Connect'}
-                        </button>
-                      </>
-                    ) : (
-                      <button className="connect-button" disabled>
-                        This is you
-                      </button>
-                    )
-                  ) : (
-                    <button 
-                      className="connect-button"
-                      onClick={() => {
-                        alert('Please sign in to connect with other users');
-                      }}
-                    >
-                      Sign in to Connect
-                    </button>
-                  )}
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="empty-profile">
-              <h2>User Profile</h2>
-              <p>Select a user to view their profile</p>
+              ))}
             </div>
           )}
         </div>
       </div>
+
+      {/* Initiative Creation Modal */}
+      {activeTab === 'initiatives' && showInitiativeModal && (
+        <div className="modal-overlay" onClick={() => setShowInitiativeModal(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <h2>Create New Initiative</h2>
+            <form onSubmit={handleCreateInitiative}>
+              <div className="form-group">
+                <label htmlFor="title">Initiative Title</label>
+                <input
+                  type="text"
+                  id="title"
+                  value={newInitiative.title}
+                  onChange={(e) => setNewInitiative({...newInitiative, title: e.target.value})}
+                  placeholder="e.g., Community Garden Project"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="category">Category</label>
+                <select
+                  id="category"
+                  value={newInitiative.category}
+                  onChange={(e) => setNewInitiative({...newInitiative, category: e.target.value})}
+                  required
+                >
+                  <option value="">Select a category</option>
+                  <option value="environment">Environment</option>
+                  <option value="education">Education</option>
+                  <option value="health">Health</option>
+                  <option value="social">Social Justice</option>
+                  <option value="community">Community Development</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>Location</label>
+                <p className="location-hint">
+                  {newInitiative.location 
+                    ? `Selected: ${newInitiative.location.lat.toFixed(4)}, ${newInitiative.location.lng.toFixed(4)}`
+                    : 'Click on the map to set location'}
+                </p>
+              </div>
+
+              <div className="modal-actions">
+                <button type="button" onClick={() => setShowInitiativeModal(false)}>
+                  Cancel
+                </button>
+                <button type="submit" disabled={!newInitiative.location}>
+                  Create Initiative
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

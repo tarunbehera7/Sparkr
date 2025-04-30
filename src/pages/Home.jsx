@@ -9,8 +9,8 @@ const Home = () => {
   // Animation variants
   const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
       transition: {
         duration: 0.6,
@@ -69,16 +69,27 @@ const Home = () => {
     }
   ];
 
+  
+
   return (
     <div className="home-container">
-      <motion.section 
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="background-video"
+      >
+        <source src="/video/bg2.mp4" type="video/mp4" />
+      </video>
+      <motion.section
         className="hero-section"
         initial="hidden"
         animate="visible"
         variants={staggerContainer}
       >
         <div className="hero-content">
-          <motion.div 
+          <motion.div
             className="discover-badge"
             variants={fadeInUp}
           >
@@ -114,13 +125,13 @@ const Home = () => {
           </motion.div>
         </div>
 
-        <motion.div 
+        <motion.div
           className="community-image-section"
           variants={fadeInUp}
           whileHover={{ scale: 1.02 }}
           transition={{ duration: 0.3 }}
         >
-          <motion.div 
+          <motion.div
             className="animated-scene"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -131,12 +142,12 @@ const Home = () => {
               <motion.div
                 key={i}
                 className="animated-circle"
-                initial={{ 
+                initial={{
                   x: Math.random() * 200 - 100,
                   y: Math.random() * 200 - 100,
                   scale: 0
                 }}
-                animate={{ 
+                animate={{
                   x: Math.random() * 200 - 100,
                   y: Math.random() * 200 - 100,
                   scale: 1
@@ -149,7 +160,7 @@ const Home = () => {
                 }}
               />
             ))}
-            
+
             {/* Connecting lines between circles */}
             <motion.div
               className="connecting-lines"
@@ -163,7 +174,7 @@ const Home = () => {
               className="central-hub"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ 
+              transition={{
                 type: "spring",
                 stiffness: 260,
                 damping: 20,
@@ -185,11 +196,11 @@ const Home = () => {
             </motion.div>
           </motion.div>
 
-          <motion.div 
-            // className="online-status"
-            // initial={{ opacity: 0, y: 20 }}
-            // animate={{ opacity: 1, y: 0 }}
-            // transition={{ delay: 0.8, duration: 0.5 }}
+          <motion.div
+          // className="online-status"
+          // initial={{ opacity: 0, y: 20 }}
+          // animate={{ opacity: 1, y: 0 }}
+          // transition={{ delay: 0.8, duration: 0.5 }}
           >
             2,500+ changemakers online now
           </motion.div>
@@ -212,7 +223,7 @@ const Home = () => {
         </motion.div>
       </motion.section> */}
 
-      <motion.section 
+      <motion.section
         className="stats-section"
         initial="hidden"
         whileInView="visible"
@@ -221,7 +232,7 @@ const Home = () => {
       >
         <div className="stats-grid">
           {statsData.map((stat, index) => (
-            <motion.div 
+            <motion.div
               key={index}
               className="stat-card"
               variants={fadeInUp}
@@ -234,14 +245,14 @@ const Home = () => {
         </div>
       </motion.section>
 
-      <motion.section 
+      <motion.section
         className="how-it-works"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
         variants={staggerContainer}
       >
-        <motion.h2 
+        <motion.h2
           className="section-title"
           variants={fadeInUp}
         >
@@ -249,13 +260,13 @@ const Home = () => {
         </motion.h2>
         <div className="features-grid">
           {features.map((feature, index) => (
-            <motion.div 
+            <motion.div
               key={index}
               className="feature-card"
               variants={fadeInUp}
-              // whileHover={{ y: -8, boxShadow: "0px 12px 24px rgba(0, 0, 0, 0.12)" }}
+            // whileHover={{ y: -8, boxShadow: "0px 12px 24px rgba(0, 0, 0, 0.12)" }}
             >
-              <motion.div 
+              <motion.div
                 className="feature-icon"
                 whileHover={{ rotate: 360 }}
                 transition={{ duration: 0.6 }}
@@ -272,7 +283,7 @@ const Home = () => {
         </div>
       </motion.section>
 
-      <motion.section 
+      <motion.section
         className="cta-section"
         initial="hidden"
         whileInView="visible"
