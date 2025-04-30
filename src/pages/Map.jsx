@@ -7,7 +7,7 @@ import L from 'leaflet';
 import { ref, push, set, get, onValue, serverTimestamp } from 'firebase/database';
 import { database } from '../config/firebase';
 import mockUsers from '../data/mockUsers';
-import { FaPlus, FaMapMarkerAlt, FaUser } from 'react-icons/fa';
+import { FaPlus, FaMapMarkerAlt, FaUser, FaMapPin } from 'react-icons/fa';
 
 // Fix for default marker icons in Leaflet with React
 delete L.Icon.Default.prototype._getIconUrl;
@@ -36,6 +36,44 @@ const initiativeIcon = new L.Icon({
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
   shadowSize: [41, 41]
+});
+
+// Update the customLegendControl definition
+const customLegendControl = L.Control.extend({
+  options: {
+    position: 'topright'
+  },
+
+  onAdd: function() {
+    const container = L.DomUtil.create('div', 'legend-control');
+
+    const title = document.createElement('strong');
+    title.textContent = 'Legend';
+    container.appendChild(title);
+
+    const markers = [
+      { color: '#ff69b4', text: 'You' },
+      { color: '#ffa500', text: 'Connected' },
+      { color: '#ffd700', text: 'Pending Request' },
+      { color: '#808080', text: 'Not Connected' }
+    ];
+
+    markers.forEach(marker => {
+      const row = document.createElement('div');
+      const dot = document.createElement('span');
+      dot.className = 'marker-dot';
+      dot.style.backgroundColor = marker.color;
+      
+      const text = document.createElement('span');
+      text.textContent = marker.text;
+      
+      row.appendChild(dot);
+      row.appendChild(text);
+      container.appendChild(row);
+    });
+
+    return container;
+  }
 });
 
 function MapController({ selectedUser }) {
@@ -78,6 +116,7 @@ function MapEvents({ onMapClick }) {
 function Map() {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedInitiative, setSelectedInitiative] = useState(null);
   const [loading, setLoading] = useState(true);
   const [connections, setConnections] = useState({});
   const [initiatives, setInitiatives] = useState([]);
@@ -397,6 +436,16 @@ function Map() {
     }
   };
 
+  const handleInitiativeClick = (initiative) => {
+    setSelectedInitiative(initiative);
+    if (mapRef.current) {
+      mapRef.current.setView(
+        [initiative.location.lat, initiative.location.lng],
+        8  // Changed from 13 to 8 for a less aggressive zoom
+      );
+    }
+  };
+
   return (
     <div className="map-page">
       <div className="map-header">
@@ -410,13 +459,19 @@ function Map() {
             <div className="tab-buttons">
               <button 
                 className={`tab-button ${activeTab === 'initiatives' ? 'active' : ''}`}
-                onClick={() => setActiveTab('initiatives')}
+                onClick={() => {
+                  setActiveTab('initiatives');
+                  setSelectedInitiative(null);
+                }}
               >
                 <FaMapMarkerAlt /> Initiatives
               </button>
               <button 
                 className={`tab-button ${activeTab === 'profile' ? 'active' : ''}`}
-                onClick={() => setActiveTab('profile')}
+                onClick={() => {
+                  setActiveTab('profile');
+                  setSelectedInitiative(null);
+                }}
               >
                 <FaUser /> Profile
               </button>
@@ -425,52 +480,17 @@ function Map() {
 
           <div className="sidebar-content">
             {activeTab === 'initiatives' ? (
-              <>
-                <div className="sidebar-actions">
-                  <button 
-                    className="create-initiative-btn"
-                    onClick={() => setShowInitiativeModal(true)}
-                  >
-                    <FaPlus /> Create Initiative
-                  </button>
-                </div>
-
-                {loading ? (
-                  <div className="loading">Loading initiatives...</div>
-                ) : (
-                  <div className="initiatives-list">
-                    {initiatives
-                      .filter(initiative => initiative.creatorId !== user?.email)
-                      .map((initiative) => (
-                        <div 
-                          key={initiative.id} 
-                          className="initiative-card"
-                          onClick={() => {
-                            if (mapRef.current) {
-                              mapRef.current.setView(
-                                [initiative.location.lat, initiative.location.lng],
-                                13
-                              );
-                            }
-                          }}
-                        >
-                          <div className="initiative-info">
-                            <h3>{initiative.title}</h3>
-                            <div className="initiative-category">
-                              <span className="category-tag">{initiative.category}</span>
-                            </div>
-                            <div className="initiative-creator">
-                              Created by: {initiative.creatorName}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                )}
-              </>
+              <div className="sidebar-actions">
+                <button 
+                  className="create-initiative-btn"
+                  onClick={() => setShowInitiativeModal(true)}
+                >
+                  <FaPlus /> Create Initiative
+                </button>
+              </div>
             ) : (
               <div className="profile-initiatives">
-                <h3>My Initiatives</h3>
+                <h3 className='profile-initiatives-title'>My Initiatives</h3>
                 {user ? (
                   <div className="my-initiatives-list">
                     {initiatives
@@ -478,27 +498,24 @@ function Map() {
                       .map((initiative) => (
                         <div 
                           key={initiative.id} 
-                          className="my-initiative-card"
-                          onClick={() => {
-                            if (mapRef.current) {
-                              mapRef.current.setView(
-                                [initiative.location.lat, initiative.location.lng],
-                                13
-                              );
-                            }
-                          }}
+                          className={`my-initiative-card ${selectedInitiative?.id === initiative.id ? 'selected' : ''}`}
+                          onClick={() => handleInitiativeClick(initiative)}
                         >
+                          <div className="initiative-icon">
+                            <FaMapMarkerAlt size={24} color="var(--primary-color)" />
+                          </div>
                           <div className="initiative-info">
                             <h3>{initiative.title}</h3>
                             <div className="initiative-category">
                               <span className="category-tag">{initiative.category}</span>
                             </div>
-                            <div className="initiative-location">
-                              Location: {initiative.location.lat.toFixed(4)}, {initiative.location.lng.toFixed(4)}
+                            {/* <div className="initiative-location">
+                              <FaMapPin style={{ marginRight: '4px' }} />
+                              {initiative.location.lat.toFixed(4)}, {initiative.location.lng.toFixed(4)}
                             </div>
                             <div className="initiative-created">
                               Created: {new Date(initiative.createdAt).toLocaleDateString()}
-                            </div>
+                            </div> */}
                           </div>
                         </div>
                       ))}
@@ -508,9 +525,99 @@ function Map() {
                     Please sign in to view your initiatives
                   </div>
                 )}
+                {loading ? (
+                  <div className="loading">Loading initiatives...</div>
+                ) : (
+                  <div className="initiatives-list">
+                    {initiatives
+                      .filter(initiative => initiative.creatorId !== user?.email)
+                      .map((initiative) => (
+                        <div 
+                          key={initiative.id} 
+                          className={`initiative-card ${selectedInitiative?.id === initiative.id ? 'selected' : ''}`}
+                          onClick={() => handleInitiativeClick(initiative)}
+                        >
+                          <div className="initiative-icon">
+                            <FaMapMarkerAlt size={24} color="var(--primary-color)" />
+                          </div>
+                          <div className="initiative-info">
+                            <h3>{initiative.title}</h3>
+                            <div className="initiative-category">
+                              <span className="category-tag">{initiative.category}</span>
+                            </div>
+                            {/* <div className="initiative-creator">
+                              Created by: {initiative.creatorName}
+                            </div>
+                            <div className="initiative-location">
+                              <FaMapPin style={{ marginRight: '4px' }} />
+                              {initiative.location.lat.toFixed(4)}, {initiative.location.lng.toFixed(4)}
+                            </div> */}
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                )}
               </div>
             )}
           </div>
+
+          {/* Move modal inside map-sidebar */}
+          {activeTab === 'initiatives' && showInitiativeModal && (
+            <div className="modal-overlay" onClick={() => setShowInitiativeModal(false)}>
+              <div className="modal-content" onClick={e => e.stopPropagation()}>
+                <h2>Create New Initiative</h2>
+                <form onSubmit={handleCreateInitiative}>
+                  <div className="form-group">
+                    <label htmlFor="title">Initiative Title</label>
+                    <input
+                      type="text"
+                      id="title"
+                      value={newInitiative.title}
+                      onChange={(e) => setNewInitiative({...newInitiative, title: e.target.value})}
+                      placeholder="e.g., Community Garden Project"
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="category">Category</label>
+                    <select
+                      id="category"
+                      value={newInitiative.category}
+                      onChange={(e) => setNewInitiative({...newInitiative, category: e.target.value})}
+                      required
+                    >
+                      <option value="">Select a category</option>
+                      <option value="environment">Environment</option>
+                      <option value="education">Education</option>
+                      <option value="health">Health</option>
+                      <option value="social">Social Justice</option>
+                      <option value="community">Community Development</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Location</label>
+                    <p className="location-hint">
+                      {newInitiative.location 
+                        ? `Selected: ${newInitiative.location.lat.toFixed(4)}, ${newInitiative.location.lng.toFixed(4)}`
+                        : 'Click on the map to set location'}
+                    </p>
+                  </div>
+
+                  <div className="modal-actions">
+                    <button type="button" onClick={() => setShowInitiativeModal(false)}>
+                      Cancel
+                    </button>
+                    <button type="submit" disabled={!newInitiative.location}>
+                      Create Initiative
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="map-view">
@@ -528,6 +635,12 @@ function Map() {
               >
                 <MapController selectedUser={selectedUser} />
                 <MapEvents onMapClick={handleMapClick} />
+                {/* Add the legend control properly */}
+                {map => {
+                  const legend = new customLegendControl();
+                  map.addControl(legend);
+                  return null;
+                }}
                 <TileLayer
                   url="https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=5CnDOnQ0UYnkHZvEU0BY"
                   attribution='<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>'
@@ -587,18 +700,21 @@ function Map() {
                   <Marker
                     key={initiative.id}
                     position={[initiative.location.lat, initiative.location.lng]}
-                    icon={initiativeIcon}
+                    icon={selectedInitiative?.id === initiative.id ? selectedIcon : initiativeIcon}
+                    eventHandlers={{
+                      click: () => handleInitiativeClick(initiative)
+                    }}
                   >
                     <Popup>
                       <div className="initiative-popup">
                         <h3>{initiative.title}</h3>
-                        <p>{initiative.description}</p>
+                        {/* <p>{initiative.description}</p>
                         <div className="initiative-category">
                           <span className="category-tag">{initiative.category}</span>
                         </div>
                         <div className="initiative-creator">
                           Created by: {initiative.creatorName}
-                        </div>
+                        </div> */}
                       </div>
                     </Popup>
                   </Marker>
@@ -671,64 +787,6 @@ function Map() {
           )}
         </div>
       </div>
-
-      {/* Initiative Creation Modal */}
-      {activeTab === 'initiatives' && showInitiativeModal && (
-        <div className="modal-overlay" onClick={() => setShowInitiativeModal(false)}>
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
-            <h2>Create New Initiative</h2>
-            <form onSubmit={handleCreateInitiative}>
-              <div className="form-group">
-                <label htmlFor="title">Initiative Title</label>
-                <input
-                  type="text"
-                  id="title"
-                  value={newInitiative.title}
-                  onChange={(e) => setNewInitiative({...newInitiative, title: e.target.value})}
-                  placeholder="e.g., Community Garden Project"
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="category">Category</label>
-                <select
-                  id="category"
-                  value={newInitiative.category}
-                  onChange={(e) => setNewInitiative({...newInitiative, category: e.target.value})}
-                  required
-                >
-                  <option value="">Select a category</option>
-                  <option value="environment">Environment</option>
-                  <option value="education">Education</option>
-                  <option value="health">Health</option>
-                  <option value="social">Social Justice</option>
-                  <option value="community">Community Development</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label>Location</label>
-                <p className="location-hint">
-                  {newInitiative.location 
-                    ? `Selected: ${newInitiative.location.lat.toFixed(4)}, ${newInitiative.location.lng.toFixed(4)}`
-                    : 'Click on the map to set location'}
-                </p>
-              </div>
-
-              <div className="modal-actions">
-                <button type="button" onClick={() => setShowInitiativeModal(false)}>
-                  Cancel
-                </button>
-                <button type="submit" disabled={!newInitiative.location}>
-                  Create Initiative
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
