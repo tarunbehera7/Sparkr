@@ -1847,6 +1847,14 @@ footer {
   height: 100%;
 }
 
+.profile-initiatives .profile-initiatives-title h3:first-of-type {
+  color: var(--primary-color);
+}
+
+.initiative-card h3 {
+  color: var(--text-primary); /* Default color for non-selected h3 */
+}
+
 .map-placeholder {
   display: flex;
   justify-content: center;
@@ -2230,6 +2238,55 @@ footer {
   padding: 8px !important;
 }
 
+/* Legend Control Styles */
+.leaflet-top.leaflet-right {
+  display: block !important;
+  z-index: 1000;
+}
+
+.legend-control {
+  background: white;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  min-width: 160px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  margin: 10px;
+  font-family: inherit;
+}
+
+.legend-control strong {
+  display: block;
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.legend-control div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: #666;
+  font-size: 13px;
+}
+
+.legend-control div:last-child {
+  margin-bottom: 0;
+}
+
+.legend-control .marker-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/*----------------------------------*/
+
+
 /* Discussion Styles */
 .discussion-overlay {
   position: fixed;
@@ -2411,4 +2468,150 @@ footer {
 
 .leaflet-marker-icon.leaflet-interactive:hover {
   filter: hue-rotate(180deg) saturate(200%) brightness(100%);
+}
+
+/* Legend Control Styles */
+.leaflet-top.leaflet-right {
+  display: block !important;
+  z-index: 1000;
+}
+
+.legend-control {
+  background: white;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  min-width: 160px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  margin: 10px;
+  font-family: inherit;
+}
+
+.legend-control strong {
+  display: block;
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.legend-control div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: #666;
+  font-size: 13px;
+}
+
+.legend-control div:last-child {
+  margin-bottom: 0;
+}
+
+.legend-control .marker-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* Initiative Card Styles */
+.initiative-card,
+.my-initiative-card {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.initiative-card:hover,
+.my-initiative-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.initiative-card.selected,
+.my-initiative-card.selected {
+  border-color: var(--primary-color);
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+.initiative-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.initiative-info h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.initiative-category {
+  margin-bottom: 0.75rem;
+}
+
+.category-tag {
+  background: var(--light-bg);
+  color: var(--primary-color);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.initiative-creator,
+.initiative-location {
+  color: var(--text-light);
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.initiative-created {
+  color: var(--text-light);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.initiative-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--light-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.initiatives-list,
+.my-initiatives-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem 0;
+}
+
+.initiative-location,
+.initiative-creator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.profile-initiatives-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 1rem 0;
+  padding: 0 1rem;
 } 

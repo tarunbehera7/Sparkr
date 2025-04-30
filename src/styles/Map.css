@@ -219,6 +219,7 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+  position: relative;
 }
 
 .sidebar-header {
@@ -309,43 +310,55 @@
 
 .initiative-card,
 .my-initiative-card {
-  background: var(--light-bg);
-  border-radius: var(--radius-md);
-  padding: 1rem;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 8px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .initiative-card:hover,
 .my-initiative-card:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #f8f9fa;
+}
+
+.initiative-card.selected,
+.my-initiative-card.selected {
+  border: 2px solid #4a90e2;
+  background-color: #f0f7ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(74, 144, 226, 0.1);
 }
 
 .initiative-info h3 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1rem;
-  color: var(--text-color);
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #1f2937;
 }
 
 .initiative-category {
-  margin-bottom: 0.5rem;
+  margin-bottom: 8px;
 }
 
 .category-tag {
-  background: var(--primary-color);
-  color: white;
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
+  display: inline-block;
+  padding: 4px 8px;
+  background-color: #e5e7eb;
+  color: #4b5563;
+  border-radius: 4px;
+  font-size: 12px;
 }
 
 .initiative-creator,
 .initiative-location,
 .initiative-created {
-  font-size: 0.8rem;
-  color: var(--text-light);
-  margin-top: 0.25rem;
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 4px;
 }
 
 .login-prompt {
@@ -484,4 +497,33 @@
   .map-sidebar {
     display: none;
   }
+}
+
+.legend-control {
+  background: white;
+  padding: 10px;
+  border-radius: 4px;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+  font-family: inherit;
+  margin: 10px;
+  min-width: 150px;
+}
+
+.legend-control strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #333;
+  font-size: 14px;
+}
+
+.legend-control div {
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+}
+
+.legend-control div:last-child {
+  margin-bottom: 0;
 } 
