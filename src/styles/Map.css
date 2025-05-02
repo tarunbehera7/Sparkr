@@ -47,10 +47,12 @@
   border-radius: var(--radius-lg);
   width: 90%;
   max-width: 500px;
-  box-shadow: var(--shadow-xl);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   animation: modalSlideIn 0.3s ease-out;
   position: relative;
   margin: 1rem;
+  border: 1px solid var(--border-color);
+  background: linear-gradient(to bottom, #ffffff, #f8fafc);
 }
 
 @keyframes modalSlideIn {
@@ -66,39 +68,46 @@
 
 .modal-content h2 {
   margin-bottom: 1.5rem;
-  color: var(--text-color);
+  color: var(--primary-color);
   font-size: 1.5rem;
   font-weight: 600;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 0.75rem;
 }
 
 .form-group {
   margin-bottom: 1.5rem;
+  position: relative;
+  transition: all 0.3s ease;
 }
 
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
   color: var(--text-color);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 0.95rem;
+  transition: all 0.2s ease;
 }
 
 .form-group input,
 .form-group select {
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.85rem 1rem;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   font-size: 1rem;
   transition: all 0.3s ease;
   background: var(--white);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05) inset;
 }
 
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+  transform: translateY(-1px);
 }
 
 .location-hint {
@@ -109,45 +118,60 @@
   background: var(--light-bg);
   border-radius: var(--radius-md);
   border: 1px dashed var(--border-color);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05) inset;
 }
 
 .modal-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 1rem;
   margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
 }
 
 .modal-actions button {
-  padding: 0.75rem 1.5rem;
+  padding: 0.85rem 1.5rem;
   border-radius: var(--radius-md);
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 0.95rem;
+  letter-spacing: 0.01em;
 }
 
 .modal-actions button[type="button"] {
-  background: var(--light-bg);
+  background: var(--white);
   color: var(--text-color);
   border: 1px solid var(--border-color);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 .modal-actions button[type="button"]:hover {
-  background: var(--border-color);
+  background: var(--light-bg);
+  border-color: var(--gray);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.08);
 }
 
 .modal-actions .submit-button {
   background: var(--primary-color);
   color: white;
   border: none;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 2px 5px rgba(79, 70, 229, 0.3);
+  position: relative;
+  overflow: hidden;
 }
 
 .modal-actions .submit-button:hover {
   background: var(--primary-dark);
   transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 4px 8px rgba(79, 70, 229, 0.4);
+}
+
+.modal-actions .submit-button:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(79, 70, 229, 0.2);
 }
 
 .modal-actions .submit-button:disabled {
@@ -155,21 +179,17 @@
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+  opacity: 0.7;
 }
 
 .initiative-popup {
-  padding: 1.25rem;
-  max-width: 300px;
-  background: white;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
+  padding: 5px;
+  min-width: 180px;
 }
 
 .initiative-popup h3 {
-  margin-bottom: 0.75rem;
-  color: var(--text-color);
-  font-size: 1.1rem;
-  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
 }
 
 .initiative-popup p {
@@ -184,6 +204,8 @@
 }
 
 .category-tag {
+  background-color: rgba(79, 70, 229, 0.1);
+  color: var(--primary-color);
   display: inline-block;
   padding: 0.35rem 0.85rem;
   background: var(--light-bg);
@@ -191,15 +213,18 @@
   border-radius: 100px;
   font-size: 0.85rem;
   font-weight: 500;
-  box-shadow: var(--shadow-sm);
+  /* box-shadow: var(--shadow-sm); */
+}
+
+.category-tag:hover {
+  background: var(--primary-color);
+  color: var(--white);
 }
 
 .initiative-creator {
-  font-size: 0.85rem;
-  color: var(--text-light);
-  margin-top: 0.5rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid var(--border-color);
+  font-size: 12px;
+  color: #666;
+  margin-top: 6px;
 }
 
 .map-container {
@@ -378,6 +403,7 @@
   overflow: hidden;
   border: 1px solid var(--border-color);
   height: 100%;
+  position: relative;
 }
 
 .user-details {
@@ -499,31 +525,134 @@
   }
 }
 
+.leaflet-control-container {
+  position: absolute;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.leaflet-control-container .leaflet-top,
+.leaflet-control-container .leaflet-bottom {
+  position: absolute;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.leaflet-control-container .leaflet-top.leaflet-left {
+  top: 0;
+  left: 0;
+}
+
+.leaflet-control-container .leaflet-top.leaflet-right {
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  z-index: 1000 !important;
+}
+
+.leaflet-control-container .leaflet-bottom.leaflet-left {
+  bottom: 0;
+  left: 0;
+}
+
+.leaflet-control-container .leaflet-bottom.leaflet-right {
+  bottom: 0;
+  right: 0;
+}
+
+.leaflet-control-container .leaflet-control {
+  clear: both;
+  pointer-events: auto;
+}
+
 .legend-control {
-  background: white;
-  padding: 10px;
-  border-radius: 4px;
-  box-shadow: 0 1px 5px rgba(0,0,0,0.2);
-  font-family: inherit;
-  margin: 10px;
-  min-width: 150px;
+  background: white !important;
+  padding: 12px !important;
+  border-radius: 4px !important;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.4) !important;
+  font-family: inherit !important;
+  margin: 10px !important;
+  min-width: 180px !important;
+  border: 2px solid rgba(0,0,0,0.2) !important;
+  background-clip: padding-box !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
-.legend-control strong {
-  display: block;
-  margin-bottom: 8px;
-  color: #333;
-  font-size: 14px;
+/* Simplify marker types in legend */
+.marker-types {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.legend-control div {
-  margin-bottom: 5px;
+.marker-type {
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: #666;
+  gap: 10px;
 }
 
-.legend-control div:last-child {
-  margin-bottom: 0;
+.marker-label {
+  font-size: 13px;
+  color: #333;
+  font-weight: 500;
+}
+
+.initiative-marker-icon {
+  width: 15px !important;
+  height: 24px !important;
+  object-fit: contain !important;
+}
+
+/* Remove unused legend elements */
+.legend-separator,
+.section-title,
+.initiatives-list,
+.initiative-item,
+.initiative-title,
+.no-initiatives {
+  display: none;
+}
+
+/* Style for selected popups */
+.selected-popup .leaflet-popup-content-wrapper {
+  border: 3px solid #ff4081;
+  box-shadow: 0 3px 14px rgba(255, 64, 129, 0.4);
+}
+
+.selected-popup .leaflet-popup-tip {
+  border-top-color: #ff4081;
+  box-shadow: 0 3px 14px rgba(255, 64, 129, 0.4);
+}
+
+/* Make popups more visible to indicate selection */
+.leaflet-popup-content-wrapper {
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+/* Create a pulsing effect for the selected marker */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 64, 129, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 64, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 64, 129, 0);
+  }
+}
+
+/* Ensure marker colors stay consistent */
+.leaflet-marker-icon {
+  transition: transform 0.3s ease;
+}
+
+/* Add a subtle animation for when markers are hovered */
+.leaflet-marker-icon:hover {
+  transform: translateY(-3px);
+  filter: brightness(1.1);
 } 
