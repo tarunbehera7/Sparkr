@@ -4,12 +4,12 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { Link, useNavigate } from 'react-router-dom';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { ref, push, set, get, onValue, serverTimestamp } from 'firebase/database';
+import { ref, push, set, get, onValue, serverTimestamp, remove } from 'firebase/database';
 import { database } from '../config/firebase';
 import mockUsers from '../data/mockUsers';
-import { FaPlus, FaMapMarkerAlt, FaUser, FaMapPin } from 'react-icons/fa';
+import { FaPlus, FaMapMarkerAlt, FaUser, FaMapPin, FaTrash } from 'react-icons/fa';
 
-// Fix for default marker icons in Leaflet with React
+// Reset all Leaflet default settings
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -17,80 +17,60 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-// Add this after the L.Icon.Default.mergeOptions code
-const defaultIcon = new L.Icon.Default();
-const selectedIcon = new L.Icon({
+// Create a single object to hold all our icons to avoid redefinitions
+const MapIcons = {
+  // Blue icon for people (matches #1d8cfe)
+  people: new L.Icon({
   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
   shadowSize: [41, 41]
+  }),
+  
+  // Green icon for initiatives
+  initiatives: new L.Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  }),
+  
+  // Default icon for safety
+  default: new L.Icon.Default()
+};
+
+// Clean up any existing styles that might be causing conflicts
+document.addEventListener('DOMContentLoaded', () => {
+  // First, remove any cached styles that might be affecting marker colors
+  const cacheBuster = Date.now();
+  const stylesheets = document.querySelectorAll('link[rel="stylesheet"]');
+  stylesheets.forEach(stylesheet => {
+    if (stylesheet.href.includes('leaflet')) {
+      const newHref = stylesheet.href.split('?')[0] + '?' + cacheBuster;
+      stylesheet.href = newHref;
+    }
+  });
 });
 
-// Add initiative icon
-const initiativeIcon = new L.Icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-});
-
-// Update the customLegendControl definition
-const customLegendControl = L.Control.extend({
-  options: {
-    position: 'topright'
-  },
-
-  onAdd: function() {
-    const container = L.DomUtil.create('div', 'legend-control');
-
-    const title = document.createElement('strong');
-    title.textContent = 'Legend';
-    container.appendChild(title);
-
-    const markers = [
-      { color: '#ff69b4', text: 'You' },
-      { color: '#ffa500', text: 'Connected' },
-      { color: '#ffd700', text: 'Pending Request' },
-      { color: '#808080', text: 'Not Connected' }
-    ];
-
-    markers.forEach(marker => {
-      const row = document.createElement('div');
-      const dot = document.createElement('span');
-      dot.className = 'marker-dot';
-      dot.style.backgroundColor = marker.color;
-      
-      const text = document.createElement('span');
-      text.textContent = marker.text;
-      
-      row.appendChild(dot);
-      row.appendChild(text);
-      container.appendChild(row);
-    });
-
-    return container;
-  }
-});
-
-function MapController({ selectedUser }) {
+function MapController({ selectedLocation }) {
   const map = useMap();
   
   useEffect(() => {
-    if (selectedUser) {
+    if (selectedLocation) {
       map.setView(
-        [selectedUser.location.lat, selectedUser.location.lng],
-        5,  // Fixed zoom level when selecting a user
+        [selectedLocation.lat, selectedLocation.lng],
+        8,
         {
           animate: true,
           duration: 1
         }
       );
     }
-  }, [selectedUser, map]);
+  }, [selectedLocation, map]);
 
   return null;
 }
@@ -113,6 +93,41 @@ function MapEvents({ onMapClick }) {
   return null;
 }
 
+// Replace the LegendControl component with a simple one that only shows icons
+function LegendControl() {
+  const map = useMap();
+  
+  useEffect(() => {
+    // Create the legend div
+    const legend = L.control({ position: 'topright' });
+    
+    legend.onAdd = function() {
+      const div = L.DomUtil.create('div', 'info legend');
+      div.innerHTML = `
+        <div style="background: white; padding: 10px; border-radius: 5px; box-shadow: 0 1px 5px rgba(0,0,0,0.4); border: 2px solid rgba(0,0,0,0.2);">
+          <div style="display: flex; align-items: center; margin-bottom: 8px;">
+            <img src="${MapIcons.people.options.iconUrl}" style="width: 15px; height: 24px; margin-right: 8px;" />
+            <span style="font-size: 13px; color: #333;">People Near You</span>
+          </div>
+          <div style="display: flex; align-items: center;">
+            <img src="${MapIcons.initiatives.options.iconUrl}" style="width: 15px; height: 24px; margin-right: 8px;" />
+            <span style="font-size: 13px; color: #333;">Initiatives</span>
+          </div>
+        </div>
+      `;
+      return div;
+    };
+    
+    legend.addTo(map);
+    
+    return () => {
+      legend.remove();
+    };
+  }, [map]);
+
+  return null;
+}
+
 function Map() {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -130,6 +145,8 @@ function Map() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const mapRef = React.useRef(null);
+  const legendRef = React.useRef(null);
+  const [mapInstance, setMapInstance] = useState(null);
   const [activeTab, setActiveTab] = useState('initiatives');
 
   // Add a function to clear connections for a new user
@@ -230,8 +247,8 @@ function Map() {
     });
   }, []);
 
-  const handleUserClick = (selectedUser) => {
-    setSelectedUser(selectedUser);
+  const handleUserClick = (clickedUser) => {
+    setSelectedUser(clickedUser);
   };
 
   // Handle connect to navigate to community chat
@@ -436,13 +453,67 @@ function Map() {
     }
   };
 
+  // Separate handler for initiative selection to avoid conflict with user selection
   const handleInitiativeClick = (initiative) => {
     setSelectedInitiative(initiative);
-    if (mapRef.current) {
-      mapRef.current.setView(
-        [initiative.location.lat, initiative.location.lng],
-        8  // Changed from 13 to 8 for a less aggressive zoom
-      );
+  };
+
+  // Update the handleMapInit function
+  const handleMapInit = (map) => {
+    mapRef.current = map;
+    setMapInstance(map);
+  };
+
+  // Update the initiatives effect
+  useEffect(() => {
+    // Make initiatives available globally for the legend control
+    window.mapInitiatives = initiatives.map(initiative => ({
+      ...initiative,
+      selected: selectedInitiative?.id === initiative.id
+    }));
+    
+    // Update the legend if available
+    if (window.updateLegendInitiatives) {
+      window.updateLegendInitiatives();
+    }
+  }, [initiatives, selectedInitiative]);
+
+  // Add function to handle initiative deletion
+  const handleDeleteInitiative = async (initiativeId, e) => {
+    // Stop the click event from propagating to the card
+    e.stopPropagation();
+    
+    if (!user) {
+      alert('Please sign in to delete initiatives');
+      return;
+    }
+    
+    try {
+      // Check if the user is the creator
+      const initiativeRef = ref(database, `initiatives/${initiativeId}`);
+      const snapshot = await get(initiativeRef);
+      
+      if (snapshot.exists()) {
+        const initiative = snapshot.val();
+        
+        if (initiative.creatorId !== user.email) {
+          alert('You can only delete your own initiatives');
+          return;
+        }
+        
+        // Confirm deletion
+        if (window.confirm('Are you sure you want to delete this initiative?')) {
+          await remove(initiativeRef);
+          
+          // If the deleted initiative was selected, clear selection
+          if (selectedInitiative && selectedInitiative.id === initiativeId) {
+            setSelectedInitiative(null);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error deleting initiative:', error);
+      alert('Failed to delete initiative. Please try again.');
     }
   };
 
@@ -509,14 +580,14 @@ function Map() {
                             <div className="initiative-category">
                               <span className="category-tag">{initiative.category}</span>
                             </div>
-                            {/* <div className="initiative-location">
-                              <FaMapPin style={{ marginRight: '4px' }} />
-                              {initiative.location.lat.toFixed(4)}, {initiative.location.lng.toFixed(4)}
-                            </div>
-                            <div className="initiative-created">
-                              Created: {new Date(initiative.createdAt).toLocaleDateString()}
-                            </div> */}
                           </div>
+                          <button 
+                            className="delete-initiative-btn"
+                            onClick={(e) => handleDeleteInitiative(initiative.id, e)}
+                            title="Delete initiative"
+                          >
+                            <FaTrash size={14} />
+                          </button>
                         </div>
                       ))}
                   </div>
@@ -545,13 +616,6 @@ function Map() {
                             <div className="initiative-category">
                               <span className="category-tag">{initiative.category}</span>
                             </div>
-                            {/* <div className="initiative-creator">
-                              Created by: {initiative.creatorName}
-                            </div>
-                            <div className="initiative-location">
-                              <FaMapPin style={{ marginRight: '4px' }} />
-                              {initiative.location.lat.toFixed(4)}, {initiative.location.lng.toFixed(4)}
-                            </div> */}
                           </div>
                         </div>
                       ))}
@@ -565,7 +629,7 @@ function Map() {
           {activeTab === 'initiatives' && showInitiativeModal && (
             <div className="modal-overlay" onClick={() => setShowInitiativeModal(false)}>
               <div className="modal-content" onClick={e => e.stopPropagation()}>
-                <h2>Create New Initiative</h2>
+                {/* <h2>Create New Initiative</h2> */}
                 <form onSubmit={handleCreateInitiative}>
                   <div className="form-group">
                     <label htmlFor="title">Initiative Title</label>
@@ -631,27 +695,37 @@ function Map() {
                 minZoom={2}
                 maxBounds={[[-90, -180], [90, 180]]}
                 style={{ height: '100%', width: '100%' }}
-                ref={mapRef}
+                whenCreated={handleMapInit}
               >
-                <MapController selectedUser={selectedUser} />
+                {/* Use the controller with selected location */}
+                {selectedUser && (
+                  <MapController 
+                    selectedLocation={selectedUser.location}
+                  />
+                )}
+                {selectedInitiative && !selectedUser && (
+                  <MapController 
+                    selectedLocation={selectedInitiative.location}
+                  />
+                )}
                 <MapEvents onMapClick={handleMapClick} />
-                {/* Add the legend control properly */}
-                {map => {
-                  const legend = new customLegendControl();
-                  map.addControl(legend);
-                  return null;
-                }}
                 <TileLayer
                   url="https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=5CnDOnQ0UYnkHZvEU0BY"
                   attribution='<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>'
                 />
+                
+                <LegendControl />
+                
+                {/* User markers - always use the people icon */}
                 {users.map((mapUser) => (
                   <Marker
                     key={mapUser.id}
                     position={[mapUser.location.lat, mapUser.location.lng]}
-                    icon={selectedUser?.id === mapUser.id ? selectedIcon : defaultIcon}
+                    icon={MapIcons.people}
                     eventHandlers={{
-                      click: () => handleUserClick(mapUser),
+                      click: () => {
+                        handleUserClick(mapUser);
+                      },
                       mouseover: (e) => {
                         e.target.openPopup();
                       },
@@ -660,7 +734,7 @@ function Map() {
                       }
                     }}
                   >
-                    <Popup>
+                    <Popup className={selectedUser?.id === mapUser.id ? 'selected-popup' : ''}>
                       <div className="marker-popup">
                         <div className="popup-header">
                           <div 
@@ -695,26 +769,24 @@ function Map() {
                   </Marker>
                 ))}
 
-                {/* Initiative Markers */}
+                {/* Initiative markers - always use the initiatives icon */}
                 {initiatives.map((initiative) => (
                   <Marker
                     key={initiative.id}
                     position={[initiative.location.lat, initiative.location.lng]}
-                    icon={selectedInitiative?.id === initiative.id ? selectedIcon : initiativeIcon}
+                    icon={MapIcons.initiatives}
                     eventHandlers={{
-                      click: () => handleInitiativeClick(initiative)
+                      click: () => {
+                        handleInitiativeClick(initiative);
+                      }
                     }}
                   >
-                    <Popup>
+                    <Popup className={selectedInitiative?.id === initiative.id ? 'selected-popup' : ''}>
                       <div className="initiative-popup">
                         <h3>{initiative.title}</h3>
-                        {/* <p>{initiative.description}</p>
                         <div className="initiative-category">
                           <span className="category-tag">{initiative.category}</span>
                         </div>
-                        <div className="initiative-creator">
-                          Created by: {initiative.creatorName}
-                        </div> */}
                       </div>
                     </Popup>
                   </Marker>
@@ -750,7 +822,7 @@ function Map() {
                       {user ? (
                         user.uid !== mapUser.id ? (
                           <>
-                            <button 
+                            <button
                               className={`connect-button ${isConnected(mapUser.id) ? 'connected' : ''}`}
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -769,7 +841,7 @@ function Map() {
                           </button>
                         )
                       ) : (
-                        <button 
+                        <button
                           className="connect-button"
                           onClick={(e) => {
                             e.stopPropagation();
