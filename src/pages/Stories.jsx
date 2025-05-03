@@ -18,7 +18,7 @@ function Stories() {
         setLoading(true);
         setError(null);
         
-        
+        const API_KEY = 'AIzaSyCYu9RKDfKUOMarLP_qVvuqRmEEnn43Flg';
       
         // Fetch videos for each category
         const categoryQueries = {
@@ -42,8 +42,7 @@ function Stories() {
                   q: query,
                   type: 'video',
                   maxResults: 6, // Reduced per category to avoid quota limits
-                  // key: API_KEY,
-                  key : process.env.REACT_APP_API_KEY,
+                  key: API_KEY,
                   relevanceLanguage: 'en',
                   videoEmbeddable: true
                 },
