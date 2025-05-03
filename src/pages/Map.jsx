@@ -4,10 +4,10 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { Link, useNavigate } from 'react-router-dom';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { ref, push, set, get, onValue, serverTimestamp, remove } from 'firebase/database';
+import { ref, push, set, get, onValue, serverTimestamp } from 'firebase/database';
 import { database } from '../config/firebase';
 import mockUsers from '../data/mockUsers';
-import { FaPlus, FaMapMarkerAlt, FaUser, FaMapPin, FaTrash } from 'react-icons/fa';
+import { FaPlus, FaMapMarkerAlt, FaUser, FaMapPin } from 'react-icons/fa';
 
 // Reset all Leaflet default settings
 delete L.Icon.Default.prototype._getIconUrl;
@@ -346,8 +346,8 @@ function Map() {
         });
 
         // Initialize private chat room
-        const chatRef = ref(database, `privateMessages/${roomId}`);
-        console.log('Initializing chat room at path:', `privateMessages/${roomId}`);
+        const chatRef = ref(database, `privateMessages/${roomId.replace('private_', '')}`);
+        console.log('Initializing chat room at path:', `privateMessages/${roomId.replace('private_', '')}`);
         await set(chatRef, {
           initialized: true,
           participants: [user.uid, targetUser.id],
@@ -478,45 +478,6 @@ function Map() {
     }
   }, [initiatives, selectedInitiative]);
 
-  // Add function to handle initiative deletion
-  const handleDeleteInitiative = async (initiativeId, e) => {
-    // Stop the click event from propagating to the card
-    e.stopPropagation();
-    
-    if (!user) {
-      alert('Please sign in to delete initiatives');
-      return;
-    }
-    
-    try {
-      // Check if the user is the creator
-      const initiativeRef = ref(database, `initiatives/${initiativeId}`);
-      const snapshot = await get(initiativeRef);
-      
-      if (snapshot.exists()) {
-        const initiative = snapshot.val();
-        
-        if (initiative.creatorId !== user.email) {
-          alert('You can only delete your own initiatives');
-          return;
-        }
-        
-        // Confirm deletion
-        if (window.confirm('Are you sure you want to delete this initiative?')) {
-          await remove(initiativeRef);
-          
-          // If the deleted initiative was selected, clear selection
-          if (selectedInitiative && selectedInitiative.id === initiativeId) {
-            setSelectedInitiative(null);
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Error deleting initiative:', error);
-      alert('Failed to delete initiative. Please try again.');
-    }
-  };
-
   return (
     <div className="map-page">
       <div className="map-header">
@@ -580,14 +541,14 @@ function Map() {
                             <div className="initiative-category">
                               <span className="category-tag">{initiative.category}</span>
                             </div>
+                            {/* <div className="initiative-location">
+                              <FaMapPin style={{ marginRight: '4px' }} />
+                              {initiative.location.lat.toFixed(4)}, {initiative.location.lng.toFixed(4)}
+                            </div>
+                            <div className="initiative-created">
+                              Created: {new Date(initiative.createdAt).toLocaleDateString()}
+                            </div> */}
                           </div>
-                          <button 
-                            className="delete-initiative-btn"
-                            onClick={(e) => handleDeleteInitiative(initiative.id, e)}
-                            title="Delete initiative"
-                          >
-                            <FaTrash size={14} />
-                          </button>
                         </div>
                       ))}
                   </div>
@@ -616,6 +577,13 @@ function Map() {
                             <div className="initiative-category">
                               <span className="category-tag">{initiative.category}</span>
                             </div>
+                            {/* <div className="initiative-creator">
+                              Created by: {initiative.creatorName}
+                            </div>
+                            <div className="initiative-location">
+                              <FaMapPin style={{ marginRight: '4px' }} />
+                              {initiative.location.lat.toFixed(4)}, {initiative.location.lng.toFixed(4)}
+                            </div> */}
                           </div>
                         </div>
                       ))}
@@ -787,6 +755,9 @@ function Map() {
                         <div className="initiative-category">
                           <span className="category-tag">{initiative.category}</span>
                         </div>
+                        {/* <div className="initiative-creator">
+                          {initiative.creatorId === user?.email ? 'Created by you' : `Created by: ${initiative.creatorName || 'Anonymous'}`}
+                        </div> */}
                       </div>
                     </Popup>
                   </Marker>
