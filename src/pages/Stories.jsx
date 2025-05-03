@@ -18,7 +18,7 @@ function Stories() {
         setLoading(true);
         setError(null);
         
-        const API_KEY = 'AIzaSyCYu9RKDfKUOMarLP_qVvuqRmEEnn43Flg';
+        const API_KEY = 'AIzaSyBn5sgW_2Rc01UcHjzYYUAmNJO60gy_GUY';
       
         // Fetch videos for each category
         const categoryQueries = {
