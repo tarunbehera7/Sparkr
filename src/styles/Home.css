@@ -283,7 +283,8 @@
 .stats-section {
   /* padding: 96px 24px; */
   /* background: #F9FAFB; */
-  background: transparent;
+  /* background: transparent; */
+  background: white;
   padding: 10px;
 }
 
