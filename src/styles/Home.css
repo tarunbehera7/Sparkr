@@ -5,6 +5,7 @@
   width: 100%;
   box-sizing: border-box; 
 }
+
 .home-container {
   max-width: 100%;
   overflow-x: hidden;
@@ -284,7 +285,13 @@
   /* padding: 96px 24px; */
   /* background: #F9FAFB; */
   /* background: transparent; */
-  background: white;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 60%,
+    #fff 50%,
+    #fff 100%
+  );
   padding: 10px;
 }
 
