@@ -18,7 +18,7 @@ function Stories() {
         setLoading(true);
         setError(null);
 
-        console.log('API KEY from env:', import.meta.env.VITE_REACT_APP_API_KEY);
+        // console.log('API KEY from env:', import.meta.env.VITE_REACT_APP_API_KEY);
         
 
         // const API_KEY = 'AIzaSyBn5sgW_2Rc01UcHjzYYUAmNJO60gy_GUY';
