@@ -21,7 +21,7 @@ function Stories() {
         // console.log('API KEY from env:', import.meta.env.VITE_REACT_APP_API_KEY);
         
 
-        const API_KEY = 'AIzaSyBn5sgW_2Rc01UcHjzYYUAmNJO60gy_GUY';
+        // const API_KEY = 'AIzaSyBn5sgW_2Rc01UcHjzYYUAmNJO60gy_GUY';
         // const API_KEY = 'AIzaSyCYu9RKDfKUOMarLP_qVvuqRmEEnn43Flg'; // Replace with your actual API key
       
         // Fetch videos for each category
@@ -46,8 +46,8 @@ function Stories() {
                   q: query,
                   type: 'video',
                   maxResults: 6, // Reduced per category to avoid quota limits
-                  key: API_KEY,
-                  // key : import.meta.env.VITE_REACT_APP_API_KEY,
+                  //key: API_KEY,
+                  key : import.meta.env.VITE_REACT_APP_API_KEY,
                   relevanceLanguage: 'en',
                   videoEmbeddable: true
                 },
