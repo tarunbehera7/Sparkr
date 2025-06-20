@@ -22,7 +22,7 @@ function Stories() {
         
 
         // const API_KEY = 'AIzaSyBn5sgW_2Rc01UcHjzYYUAmNJO60gy_GUY';
-        // const API_KEY = 'AIzaSyCYu9RKDfKUOMarLP_qVvuqRmEEnn43Flg'; // Replace with your actual API key
+        const API_KEY = 'AIzaSyCYu9RKDfKUOMarLP_qVvuqRmEEnn43Flg'; // Replace with your actual API key
       
         // Fetch videos for each category
         const categoryQueries = {
