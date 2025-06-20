@@ -46,8 +46,8 @@ function Stories() {
                   q: query,
                   type: 'video',
                   maxResults: 6, // Reduced per category to avoid quota limits
-                  //key: API_KEY,
-                  key : import.meta.env.VITE_REACT_APP_API_KEY,
+                  key: API_KEY,
+                  // key : import.meta.env.VITE_REACT_APP_API_KEY,
                   relevanceLanguage: 'en',
                   videoEmbeddable: true
                 },
