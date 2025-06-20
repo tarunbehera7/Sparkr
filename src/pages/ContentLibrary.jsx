@@ -168,7 +168,7 @@ const ContentLibrary = () => {
     try {
       setLoading(true);
 
-      // const API_KEY = 'AIzaSyAKpEvM8VHzqZFPq0JjZ7PKWtMVL-72u6Y'; // Replace with your actual API key
+      const API_KEY = 'AIzaSyAKpEvM8VHzqZFPq0JjZ7PKWtMVL-72u6Y'; // Replace with your actual API key
       
       const response = await axios.get(
         'https://www.googleapis.com/youtube/v3/search',
@@ -179,8 +179,8 @@ const ContentLibrary = () => {
             type: 'video',
             order: 'date', // Get most recent videos
             maxResults: 5,
-            // key: API_KEY,
-            key: import.meta.env.VITE_REACT_APP_OTHER_API_KEY
+            key: API_KEY,
+            // key: import.meta.env.VITE_REACT_APP_OTHER_API_KEY
           }
         }
       );
